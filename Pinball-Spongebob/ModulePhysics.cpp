@@ -168,11 +168,8 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size, bool l
 		p[i].y = PIXEL_TO_METERS(points[i * 2 + 1]);
 		LOG("x: %i, y:%i,", points[i * 2 + 0], points[i * 2 + 1]);
 	}
-
-	/*if (loop)
-		shape.CreateLoop(p, size / 2);
-	else*/
-		shape.CreateChain(p, size / 2);
+	
+	shape.CreateChain(p, size / 2);
 		
 
 	b2FixtureDef fixture;
@@ -255,9 +252,6 @@ update_status ModulePhysics::PostUpdate()
 							App->renderer->DrawLine(METERS_TO_PIXELS(prev.x), METERS_TO_PIXELS(prev.y), METERS_TO_PIXELS(v.x), METERS_TO_PIXELS(v.y), 100, 255, 100);
 						prev = v;
 					}
-
-					v = b->GetWorldPoint(shape->m_vertices[0]);
-					App->renderer->DrawLine(METERS_TO_PIXELS(prev.x), METERS_TO_PIXELS(prev.y), METERS_TO_PIXELS(v.x), METERS_TO_PIXELS(v.y), 100, 255, 100);
 				}
 				break;
 
