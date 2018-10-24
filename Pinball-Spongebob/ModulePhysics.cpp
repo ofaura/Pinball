@@ -5,7 +5,8 @@
 #include "ModulePhysics.h"
 #include "p2Point.h"
 #include "math.h"
-#include "ChainPoints.h"
+
+
 
 #ifdef _DEBUG
 #pragma comment( lib, "Box2D/libx86/Debug/Box2D.lib" )
@@ -56,7 +57,16 @@ bool ModulePhysics::Start()
 	big_ball->CreateFixture(&fixture);*/
 
 	create_pivots();
-	
+
+	int kicker[14] = {
+		1, 6,
+		5, 0,
+		56, 4,
+		59, 7,
+		55, 10,
+		5, 12,
+		1, 6
+	};
 	l_kicker = CreateKickers(86, 446, kicker, 14); //dyn
 	r_kicker = CreateKickers(221, 446, kicker, 14); //dyn
 
