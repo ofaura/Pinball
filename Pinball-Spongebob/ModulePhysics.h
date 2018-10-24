@@ -46,7 +46,7 @@ public:
 	PhysBody* CreateCircle(int x, int y, int radius,b2BodyType type = b2_staticBody);
 	PhysBody* CreateRectangle(int x, int y, int width, int height);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
-	PhysBody* CreateChain(int x, int y, int* points, int size, bool loop = false);
+	PhysBody* CreateChain(int x, int y, int* points, int size);
 
 
 	void create_pivots();
