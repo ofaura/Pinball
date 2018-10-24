@@ -5,6 +5,7 @@
 #include "ModulePhysics.h"
 #include "p2Point.h"
 #include "math.h"
+#include "ChainPoints.h"
 
 #ifdef _DEBUG
 #pragma comment( lib, "Box2D/libx86/Debug/Box2D.lib" )
@@ -34,12 +35,13 @@ bool ModulePhysics::Start()
 	// needed to create joints like mouse joint
 	b2BodyDef bd;
 	ground = world->CreateBody(&bd);
-
+	
+	/*
 	// big static circle as "ground" in the middle of the screen
 	int x = SCREEN_WIDTH / 2;
 	int y = SCREEN_HEIGHT / 1.5f;
 	int diameter = SCREEN_WIDTH / 2;
-
+	
 	b2BodyDef body;
 	body.type = b2_staticBody;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
@@ -51,7 +53,27 @@ bool ModulePhysics::Start()
 
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-	big_ball->CreateFixture(&fixture);
+	big_ball->CreateFixture(&fixture);*/
+
+	create_pivots();
+	
+	l_kicker = CreateKickers(86, 446, kicker, 14); //dyn
+	r_kicker = CreateKickers(221, 446, kicker, 14); //dyn
+
+	//Create the joint between the flipper and the flipper attacher
+	b2RevoluteJointDef jointDef;
+	jointDef.Initialize(pivot_body, l_kicker->body, pivot_body->GetWorldCenter());
+
+	jointDef.collideConnected = false;
+	//SET the limits for the joint (this will limit the angle of the flipper)
+	jointDef.enableLimit = true;
+	jointDef.lowerAngle = -0.25f * b2_pi; // -45 degrees
+	jointDef.upperAngle = 0.00f * b2_pi; // 45 degrees
+
+	//Activate the motor ESSENTIAL STEP
+	jointDef.enableMotor = true;
+
+	l_joint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 
 	return true;
 }
@@ -75,10 +97,68 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius)
+void ModulePhysics::create_pivots() {
+	//Creating the Flipper Parameters
+	int x_ = 96;
+	int y_ = 452;
+	int diameter_ = 9;
+
+	//Defining pivot properties
+	b2BodyDef pivot_def;
+	pivot_def.type = b2_staticBody;
+	pivot_def.position.Set(PIXEL_TO_METERS(x_), PIXEL_TO_METERS(y_));
+
+	//Assigning properties to the body
+	pivot_body = world->CreateBody(&pivot_def);
+
+	//Creating shape of the body
+	b2CircleShape pivot_shape;
+	pivot_shape.m_radius = PIXEL_TO_METERS(diameter_) * 0.5f;
+
+	//Assign the shape to the fixture of the body
+	b2FixtureDef pivot_fixture;
+	pivot_fixture.shape = &pivot_shape;
+	pivot_body->CreateFixture(&pivot_fixture);
+}
+
+PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	b2Body* b = world->CreateBody(&body);
+	//Create Chain
+		b2PolygonShape box;
+		b2Vec2* p = new b2Vec2[size / 2];
+
+		for (uint i = 0; i < size / 2; ++i)
+		{
+			p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);
+			p[i].y = PIXEL_TO_METERS(points[i * 2 + 1]);
+		}
+
+		box.Set(p, size / 2);
+	//End
+
+	b2FixtureDef fixture;
+	fixture.shape = &box;
+	fixture.density = 1.0f;
+
+	b->CreateFixture(&fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	b->SetUserData(pbody);
+	pbody->height = pbody->width = 0;
+
+	return pbody;
+}
+
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type)
+{
+	b2BodyDef body;
+	body.type = type;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);

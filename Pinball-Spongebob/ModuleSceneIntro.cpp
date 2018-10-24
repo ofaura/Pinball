@@ -6,7 +6,7 @@
 #include "ModuleTextures.h"
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
-#include "ChainPoints.h"
+
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	circle = box = rick = NULL;
@@ -27,7 +27,7 @@ bool ModuleSceneIntro::Start()
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
-
+	
 	return ret;
 }
 
@@ -91,7 +91,7 @@ update_status ModuleSceneIntro::Update()
 			30, 62
 		};
 
-		ricks.add(App->physics->CreateChain(0, 0, perimeter, 66, false));
+		//ricks.add(App->physics->CreateChain(0, 0, perimeter, 66, false));
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -138,3 +138,4 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
 	App->audio->PlayFx(bonus_fx);
 }
+
