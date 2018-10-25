@@ -37,53 +37,7 @@ bool ModulePhysics::Start()
 	b2BodyDef bd;
 	ground = world->CreateBody(&bd);
 	
-	/*
-	// big static circle as "ground" in the middle of the screen
-	int x = SCREEN_WIDTH / 2;
-	int y = SCREEN_HEIGHT / 1.5f;
-	int diameter = SCREEN_WIDTH / 2;
 	
-	b2BodyDef body;
-	body.type = b2_staticBody;
-	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
-
-	b2Body* big_ball = world->CreateBody(&body);
-
-	b2CircleShape shape;
-	shape.m_radius = PIXEL_TO_METERS(diameter) * 0.5f;
-
-	b2FixtureDef fixture;
-	fixture.shape = &shape;
-	big_ball->CreateFixture(&fixture);*/
-
-	create_pivots();
-
-	int kicker[14] = {
-		1, 6,
-		5, 0,
-		56, 4,
-		59, 7,
-		55, 10,
-		5, 12,
-		1, 6
-	};
-	l_kicker = CreateKickers(86, 446, kicker, 14); //dyn
-	r_kicker = CreateKickers(221, 446, kicker, 14); //dyn
-
-	//Create the joint between the flipper and the flipper attacher
-	b2RevoluteJointDef jointDef;
-	jointDef.Initialize(pivot_body, l_kicker->body, pivot_body->GetWorldCenter());
-
-	jointDef.collideConnected = false;
-	//SET the limits for the joint (this will limit the angle of the flipper)
-	jointDef.enableLimit = true;
-	jointDef.lowerAngle = -0.25f * b2_pi; // -45 degrees
-	jointDef.upperAngle = 0.00f * b2_pi; // 45 degrees
-
-	//Activate the motor ESSENTIAL STEP
-	jointDef.enableMotor = true;
-
-	l_joint = (b2RevoluteJoint*)world->CreateJoint(&jointDef);
 
 	return true;
 }
@@ -107,11 +61,33 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-void ModulePhysics::create_pivots() {
+void ModulePhysics::createJoint(b2Body* bodyA, b2Body* bodyB, bool flip) {
+	b2RevoluteJointDef jointDef;
+	jointDef.Initialize(bodyA, bodyB, bodyA->GetWorldCenter());
+
+	jointDef.collideConnected = false;
+	//SET the limits for the joint (this will limit the angle of the flipper)
+	jointDef.enableLimit = true;
+	if (flip) {
+		jointDef.lowerAngle = 0.00f * b2_pi; // -45 degrees
+		jointDef.upperAngle = 0.25f * b2_pi ; // 45 degrees
+	}
+	else {
+		jointDef.lowerAngle = -0.25f * b2_pi; // -45 degrees
+		jointDef.upperAngle = 0.00f * b2_pi; // 45 degrees
+	}
+
+	//Activate the motor ESSENTIAL STEP
+	jointDef.enableMotor = true;
+
+	joints.add((b2RevoluteJoint*)world->CreateJoint(&jointDef));
+}
+
+PhysBody* ModulePhysics::CreatePivots(int x,int y,int diameter) {
 	//Creating the Flipper Parameters
-	int x_ = 96;
-	int y_ = 452;
-	int diameter_ = 9;
+	int x_ = x;
+	int y_ = y;
+	int diameter_ = diameter;
 
 	//Defining pivot properties
 	b2BodyDef pivot_def;
@@ -119,7 +95,7 @@ void ModulePhysics::create_pivots() {
 	pivot_def.position.Set(PIXEL_TO_METERS(x_), PIXEL_TO_METERS(y_));
 
 	//Assigning properties to the body
-	pivot_body = world->CreateBody(&pivot_def);
+	b2Body* pivot_body = world->CreateBody(&pivot_def);
 
 	//Creating shape of the body
 	b2CircleShape pivot_shape;
@@ -129,6 +105,12 @@ void ModulePhysics::create_pivots() {
 	b2FixtureDef pivot_fixture;
 	pivot_fixture.shape = &pivot_shape;
 	pivot_body->CreateFixture(&pivot_fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = pivot_body;
+	pivot_body->SetUserData(pbody);
+
+	return pbody;
 }
 
 PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
@@ -141,7 +123,6 @@ PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 	//Create Chain
 		b2PolygonShape box;
 		b2Vec2* p = new b2Vec2[size / 2];
-
 		for (uint i = 0; i < size / 2; ++i)
 		{
 			p[i].x = PIXEL_TO_METERS(points[i * 2 + 0]);

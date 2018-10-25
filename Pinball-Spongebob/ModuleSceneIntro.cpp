@@ -370,4 +370,53 @@ void ModuleSceneIntro::DrawColliders()
 
 	down_right_ = App->physics->CreateChain(0, 0, down_right, 12);
 
+	//------CREATING KICKERS
+	int kicker_left[14] = {
+		1, 6,
+		5, 0,
+		56, 4,
+		59, 7,
+		55, 10,
+		5, 12,
+		1, 6
+	};
+	
+	int kicker_right[14] = {
+		1, 6,
+		5, 4,
+		56, 0,
+		59, 7,
+		55, 12,
+		5, 10,
+		1, 6
+	};
+
+	int kicker_topright[14] = {
+		0, 6,
+		3, 3,
+		45, 1,
+		48, 6,
+		45, 11,
+		3, 8,
+		0, 6
+	};
+
+	create_kickers(kicker_left, kicker_right, kicker_topright);
+
+}
+
+void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
+{
+	l_kicker = App->physics->CreateKickers(86, 443, kicker1,14); //dyn
+	r_kicker = App->physics->CreateKickers(152, 443, kicker2, 14); //dyn
+	tr_kicker = App->physics->CreateKickers(236, 265, kicker3, 14); //dyn
+
+	pivot_body1 = App->physics->CreatePivots(96,448,9);
+	pivot_body2 = App->physics->CreatePivots(205, 448, 9);
+	pivot_body3 = App->physics->CreatePivots(278, 270, 9);
+
+	
+	App->physics->createJoint(pivot_body1->body,l_kicker->body, true);
+	App->physics->createJoint(pivot_body2->body, r_kicker->body);
+	App->physics->createJoint(pivot_body3->body, tr_kicker->body);
 }
