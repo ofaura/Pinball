@@ -39,7 +39,8 @@ public:
 	PhysBody* bottom_water_slide_;
 	PhysBody* down_left_;
 	PhysBody* down_right_;
-
+	PhysBody* top_left_wall_;
+	PhysBody* top_right_wall_;
 
 	PhysBody* pivot_body1;
 	PhysBody* pivot_body2;

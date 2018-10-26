@@ -51,6 +51,12 @@ bool ModuleTextures::CleanUp()
 	return true;
 }
 
+// Retrieve size of a texture
+void ModuleTextures::GetSize(const SDL_Texture* texture, uint& width, uint& height) const
+{
+	SDL_QueryTexture((SDL_Texture*)texture, NULL, NULL, (int*)&width, (int*)&height);
+}
+
 // Load new texture from file path
 SDL_Texture* const ModuleTextures::Load(const char* path)
 {

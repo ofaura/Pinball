@@ -346,17 +346,17 @@ void ModuleSceneIntro::DrawColliders()
 
 	bottom_water_slide_ = App->physics->CreateChain(0, 0, bottom_water_slide, 18);
 
-	//int down_left[12] = {
+	int down_left[12] = {
 
-	//	119,	467,
-	//	38,		417,
-	//	38,		366,
-	//	40,		366,
-	//	40,		410,
-	//	97,		447
-	//};
+		119,	467,
+		38,		417,
+		38,		366,
+		40,		366,
+		40,		410,
+		97,		447
+	};
 
-	//down_left_ = App->physics->CreateChain(0, 0, down_left, 12);
+	down_left_ = App->physics->CreateChain(0, 0, down_left, 12);
 
 	int down_right[12] = {
 
@@ -369,6 +369,22 @@ void ModuleSceneIntro::DrawColliders()
 	};
 
 	down_right_ = App->physics->CreateChain(0, 0, down_right, 12);
+
+	int top_left_wall[4] = {
+
+		97,		34,
+		91,		13
+	};
+
+	top_left_wall_ = App->physics->CreateChain(0, 0, top_left_wall, 4);
+
+	int top_right_wall[4] = {
+
+		179,	24,
+		181,	4
+	};
+
+	top_right_wall_ = App->physics->CreateChain(0, 0, top_right_wall, 4);
 
 	//------CREATING KICKERS
 	int kicker_left[14] = {
