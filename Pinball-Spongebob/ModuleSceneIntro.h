@@ -57,5 +57,8 @@ public:
 	SDL_Texture* rick;
 	uint bonus_fx;
 
+	SDL_Texture* base_map;
+	SDL_Texture* guides;
+
 	int score = -1;
 };
