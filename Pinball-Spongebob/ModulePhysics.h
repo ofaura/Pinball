@@ -50,7 +50,7 @@ public:
 
 
 	PhysBody* CreatePivots(int x, int y, int diameter);
-	void createJoint(b2Body* bodyA, b2Body* bodyB, bool flip = false);
+	void createJoint(b2Body* bodyA, b2Body* bodyB, float low, float high, bool flip = false);
 
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
@@ -61,5 +61,7 @@ private:
 	b2World* world;
 	b2MouseJoint* mouse_joint;
 	b2Body* ground;
+public:
+
 	p2List<b2RevoluteJoint*> joints;
 };

@@ -55,45 +55,44 @@ update_status ModuleSceneIntro::Update()
 		boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_3) == KEY_DOWN)
-	{
-		// Pivot 0, 0
-		int rick_head[64] = {
-			14, 36,
-			42, 40,
-			40, 0,
-			75, 30,
-			88, 4,
-			94, 39,
-			111, 36,
-			104, 58,
-			107, 62,
-			117, 67,
-			109, 73,
-			110, 85,
-			106, 91,
-			109, 99,
-			103, 104,
-			100, 115,
-			106, 121,
-			103, 125,
-			98, 126,
-			95, 137,
-			83, 147,
-			67, 147,
-			53, 140,
-			46, 132,
-			34, 136,
-			38, 126,
-			23, 123,
-			30, 114,
-			10, 102,
-			29, 90,
-			0, 75,
-			30, 62
-		};
+	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
+		//Activate the motor ESSENTIAL STEP
+		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
+		
+		item->data->SetMaxMotorTorque(100.0f);
+		item->data->SetMotorSpeed(50.0f);
+		
+		item = item->next; 
 
-		//ricks.add(App->physics->CreateChain(0, 0, perimeter, 66, false));
+		item->data->SetMaxMotorTorque(100.0f);
+		item->data->SetMotorSpeed(50.0f);
+
+	}
+	else if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_IDLE){
+		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
+		
+		item->data->SetMaxMotorTorque(100.0f);
+		item->data->SetMotorSpeed(-50.0f);
+
+		item = item->next;
+
+		item->data->SetMaxMotorTorque(100.0f);
+		item->data->SetMotorSpeed(-50.0f);
+	}
+
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
+		//Activate the motor ESSENTIAL STEP
+		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst();
+
+		item->data->SetMaxMotorTorque(100.0f);
+		item->data->SetMotorSpeed(-50.0f);
+
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_IDLE) {
+		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst();
+
+		item->data->SetMaxMotorTorque(100.0f);
+		item->data->SetMotorSpeed(50.0f);
 	}
 
 	// Prepare for raycast ------------------------------------------------------
@@ -360,7 +359,7 @@ void ModuleSceneIntro::DrawColliders()
 
 	int down_right[12] = {
 
-		195,	464,
+		180,	475,
 		271,	415,
 		271,	366,
 		268,	366,
@@ -423,16 +422,16 @@ void ModuleSceneIntro::DrawColliders()
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 {
-	l_kicker = App->physics->CreateKickers(86, 443, kicker1,14); //dyn
+	l_kicker = App->physics->CreateKickers(98, 443, kicker1,14); //dyn
 	r_kicker = App->physics->CreateKickers(152, 443, kicker2, 14); //dyn
 	tr_kicker = App->physics->CreateKickers(236, 265, kicker3, 14); //dyn
 
-	pivot_body1 = App->physics->CreatePivots(96,448,9);
+	pivot_body1 = App->physics->CreatePivots(105,448,9);
 	pivot_body2 = App->physics->CreatePivots(205, 448, 9);
 	pivot_body3 = App->physics->CreatePivots(278, 270, 9);
 
 	
-	App->physics->createJoint(pivot_body1->body,l_kicker->body, true);
-	App->physics->createJoint(pivot_body2->body, r_kicker->body);
-	App->physics->createJoint(pivot_body3->body, tr_kicker->body);
+	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
+	App->physics->createJoint(pivot_body2->body, r_kicker->body, -0.25f, 0.16f);
+	App->physics->createJoint(pivot_body3->body, tr_kicker->body, -0.25f, 0.0f);
 }
