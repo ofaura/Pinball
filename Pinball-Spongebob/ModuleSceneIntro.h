@@ -53,4 +53,6 @@ public:
 	SDL_Texture* box;
 	SDL_Texture* rick;
 	uint bonus_fx;
+
+	int score = -1;
 };

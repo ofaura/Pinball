@@ -49,7 +49,7 @@ int ModuleFonts::Load(const char* texture_path, const char* characters, uint row
 	fonts[id].len = strlen(characters); // len: length of the table
 
 	strcpy_s(fonts[id].table, characters);
-	fonts[id].row_chars = fonts[id].len / rows;
+	fonts[id].row_chars = strlen(characters) / rows;
 	App->textures->GetSize(tex, fonts[id].char_w, fonts[id].char_h);
 	fonts[id].char_w /= fonts[id].row_chars;
 	fonts[id].char_h /= rows;
