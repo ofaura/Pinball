@@ -23,7 +23,8 @@ bool ModuleSceneIntro::Start()
 	bool ret = true;
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
-
+	base_map = App->textures->Load("Assets/base.png");
+	guides = App->textures->Load("Assets/guides.png");
 	circle = App->textures->Load("pinball/wheel.png"); 
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
@@ -31,6 +32,7 @@ bool ModuleSceneIntro::Start()
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	DrawColliders();
 
+	
 	return ret;
 }
 
@@ -38,14 +40,20 @@ bool ModuleSceneIntro::Start()
 bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
-
+	App->textures->Unload(base_map);
+	App->fonts->Unload(score);
 	return true;
 }
 
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	App->fonts->BlitText(370, 100, score, "000", 0.5f);
+	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
+	//Blit score
+	App->fonts->BlitText(385, 190, score, "000", 0.5f);
+
+
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25));
