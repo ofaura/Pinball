@@ -5,7 +5,7 @@
 #include "SDL\include\SDL_pixels.h"
 
 #define MAX_FONTS 10
-#define MAX_FONT_CHARS 256
+#define MAX_FONT_CHARS 11
 
 struct SDL_Texture;
 
