@@ -61,7 +61,7 @@ update_status ModulePhysics::PreUpdate()
 	return UPDATE_CONTINUE;
 }
 
-void ModulePhysics::createJoint(b2Body* bodyA, b2Body* bodyB, bool flip) {
+void ModulePhysics::createJoint(b2Body* bodyA, b2Body* bodyB,float low, float high, bool flip) {
 	b2RevoluteJointDef jointDef;
 	jointDef.Initialize(bodyA, bodyB, bodyA->GetWorldCenter());
 
@@ -69,16 +69,15 @@ void ModulePhysics::createJoint(b2Body* bodyA, b2Body* bodyB, bool flip) {
 	//SET the limits for the joint (this will limit the angle of the flipper)
 	jointDef.enableLimit = true;
 	if (flip) {
-		jointDef.lowerAngle = 0.00f * b2_pi; // -45 degrees
-		jointDef.upperAngle = 0.25f * b2_pi ; // 45 degrees
+		jointDef.upperAngle = high * b2_pi; // 45 degrees
+		jointDef.lowerAngle = low * b2_pi; // -45 degrees
 	}
 	else {
-		jointDef.lowerAngle = -0.25f * b2_pi; // -45 degrees
-		jointDef.upperAngle = 0.00f * b2_pi; // 45 degrees
+		jointDef.upperAngle = high * b2_pi; // 45 degrees
+		jointDef.lowerAngle = low * b2_pi; // -45 degrees
 	}
-
 	//Activate the motor ESSENTIAL STEP
-	jointDef.enableMotor = true;
+	jointDef.enableMotor = true; 
 
 	joints.add((b2RevoluteJoint*)world->CreateJoint(&jointDef));
 }
