@@ -748,6 +748,9 @@ void ModuleSceneIntro::DrawColliders()
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 
+	App->physics->CreateCircle(90, 85, 14, b2_staticBody, 2.0f);
+	App->physics->CreateCircle(173, 78, 14, b2_staticBody, 2.0f);
+	App->physics->CreateCircle(134, 107, 14, b2_staticBody, 2.0f);
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
