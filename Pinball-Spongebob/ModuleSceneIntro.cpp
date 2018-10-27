@@ -7,6 +7,7 @@
 #include "ModuleAudio.h"
 #include "ModulePhysics.h"
 #include "ModuleFonts.h"
+#include "ModulePlayer.h"
 
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
@@ -24,13 +25,23 @@ bool ModuleSceneIntro::Start()
 
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	base_map = App->textures->Load("Assets/base.png");
-	guides = App->textures->Load("Assets/guides.png");
-	right_flipper = App->textures->Load("Assets/flipper.png");
+	guides = App->textures->Load("Assets/Overlay_Middle.png");
+	overlay_down = App->textures->Load("Assets/Overlay_Down.png");
+	bounce_hamburger = App->textures->Load("Assets/flippers.png");
+	overlay = App->textures->Load("Assets/overlay.png");
+	left_flipper = App->textures->Load("Assets/flipper.png");
+	right_flipper = App->textures->Load("Assets/flipper_right.png");
+	top_right_flipper = App->textures->Load("Assets/flipper_topright.png");
 	circle = App->textures->Load("pinball/wheel.png");
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	ball = App->textures->Load("Assets/ball.png");
+	slide = App->textures->Load("Assets/water_slide.png");
+
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
+	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
+
 	DrawColliders();
 	create_sensors();
 
@@ -49,18 +60,27 @@ bool ModuleSceneIntro::CleanUp()
 // Update: draw background
 update_status ModuleSceneIntro::Update()
 {
-	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
-
-	//Blit score
-	App->fonts->BlitText(385, 190, score, "000", 0.5f);
-
-
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7, b2_dynamicBody));
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 5, b2_dynamicBody));
 		circles.getLast()->data->listener = this;
 	}
+	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(overlay_down, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(bounce_hamburger, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(slide, 0, 0, NULL, 1.0f);
+	
+	App->player->player->GetPosition(App->player->position.x, App->player->position.y);
+	App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 1.0f, 1.0f, App->player->player->GetRotation());
+	
+	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(overlay, 0, 0, NULL, 1.0f);
+
+	//Blit score
+	sprintf_s(player_lives, 10, "%d", App->player->lives);
+
+	App->fonts->BlitText(385, 190, score, "000", 0.7f);
+	App->fonts->BlitText(470, 242, lives_font, player_lives, 0.5f);
 
 	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
@@ -78,7 +98,6 @@ update_status ModuleSceneIntro::Update()
 
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(50.0f);
-
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_IDLE) {
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
@@ -90,6 +109,7 @@ update_status ModuleSceneIntro::Update()
 
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(-50.0f);
+
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
@@ -98,7 +118,6 @@ update_status ModuleSceneIntro::Update()
 
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(-50.0f);
-
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_IDLE) {
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst();
@@ -163,6 +182,17 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 	
+	int x, y;
+
+	l_kicker->GetPosition(x, y);
+	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+
+	tr_kicker->GetPosition(x, y);
+	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+	
+	r_kicker->GetPosition(x, y);
+	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+
 	return UPDATE_CONTINUE;
 }
 
@@ -407,7 +437,6 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 			c = c->next;
 		}
 	}
-
 }
 
 
@@ -447,7 +476,7 @@ void ModuleSceneIntro::DrawColliders()
 		299,	96,
 		308,	120,
 		308,	193,
-		303,	222
+		305,	222
 	};
 
 	base_layer.add(App->physics->CreateChain(0, 0, perimeter_init, 64));
@@ -461,7 +490,7 @@ void ModuleSceneIntro::DrawColliders()
 	door_ = App->physics->CreateChain(0, 0, door, 4);
 
 	int perimeter_final[14] = {
-		287,	248,
+		285,	246,
 		280,	260,
 		288,	272,
 		266,	300,
@@ -591,11 +620,11 @@ void ModuleSceneIntro::DrawColliders()
 
 	int down_left[12] = {
 
-		119,	472,
-		38,		417,
-		38,		366,
+		119,	475,
+		37,		415,
+		37,		366,
 		40,		366,
-		40,		410,
+		40,		408,
 		93,		445
 	};
 
@@ -646,7 +675,6 @@ void ModuleSceneIntro::DrawColliders()
 	left_limit_ = App->physics->CreateChain(0, 0, left_limit, 4);
 
 	int rail_right[64] = {
-
 		68,		255,
 		45,		220,
 		34,		200,
@@ -842,21 +870,17 @@ void ModuleSceneIntro::DrawColliders()
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 {
-	l_kicker = App->physics->CreateKickers(94, 443, kicker1,14); //dyn
+	l_kicker = App->physics->CreateKickers(100, 443, kicker1,14); //dyn
 	r_kicker = App->physics->CreateKickers(152, 443, kicker2, 14); //dyn
 	tr_kicker = App->physics->CreateKickers(236, 265, kicker3, 14); //dyn
 
-	pivot_body1 = App->physics->CreatePivots(100,448,9);
+	pivot_body1 = App->physics->CreatePivots(100, 448, 9);
 	pivot_body2 = App->physics->CreatePivots(205, 448, 9);
 	pivot_body3 = App->physics->CreatePivots(278, 270, 9);
 
 	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
 	App->physics->createJoint(pivot_body2->body, r_kicker->body, -0.25f, 0.16f);
 	App->physics->createJoint(pivot_body3->body, tr_kicker->body, -0.25f, 0.0f);
-
-	//l_kicker->GetPosition(position.x, position.y);
-	App->renderer->Blit(right_flipper, 0, 0, NULL, 1.0f);
-
 }
 
 void ModuleSceneIntro::create_sensors()

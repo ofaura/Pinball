@@ -30,6 +30,5 @@ public:
 private:
 
 	void SetBall(int x, int y);
-	//void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 	void Lives();
 };

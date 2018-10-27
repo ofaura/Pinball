@@ -55,20 +55,6 @@ void ModulePlayer::SetBall(int x, int y)
 	player = App->physics->CreateCircle(x, y, 7, b2_dynamicBody);
 	player->listener = this;
 }
-/*
-void ModulePlayer::OnCollision(PhysBody * bodyA, PhysBody * bodyB)
-{
-	if (bodyB->sensor_type != NONE) {
-		p2List_item<PhysBody*>* sensor;
-		sensor = App->scene_intro->sensors.getFirst();
-
-		for (sensor; sensor != nullptr; sensor = sensor->next) {
-			if (sensor->data == bodyB) {
-				sensorAction(sensor->data);
-			}
-		}
-	}
-}*/
 
 void ModulePlayer::Lives()
 {
