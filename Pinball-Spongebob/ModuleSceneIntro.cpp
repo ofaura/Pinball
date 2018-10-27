@@ -32,13 +32,8 @@ bool ModuleSceneIntro::Start()
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	DrawColliders();
-<<<<<<< HEAD
 	create_sensors();
-	
-=======
 
-
->>>>>>> 25e8eb376a5208dd67983cb1ca06688739e8dcf9
 	return ret;
 }
 
@@ -65,11 +60,7 @@ update_status ModuleSceneIntro::Update()
 
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-<<<<<<< HEAD
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 5, b2_dynamicBody));
-=======
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7, b2_dynamicBody));
->>>>>>> 25e8eb376a5208dd67983cb1ca06688739e8dcf9
 		circles.getLast()->data->listener = this;
 	}
 
