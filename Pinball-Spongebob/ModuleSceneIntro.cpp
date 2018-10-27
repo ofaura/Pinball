@@ -206,13 +206,13 @@ update_status ModuleSceneIntro::Update()
 	int x, y;
 
 	l_kicker->GetPosition(x, y);
-	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(93), PIXEL_TO_METERS(447));
 
 	tr_kicker->GetPosition(x, y);
-	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(217), PIXEL_TO_METERS(447));
 	
 	r_kicker->GetPosition(x, y);
-	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(278), PIXEL_TO_METERS(270));
 
 	return UPDATE_CONTINUE;
 }
@@ -641,24 +641,24 @@ void ModuleSceneIntro::DrawColliders()
 
 	int down_left[12] = {
 
-		119,	475,
-		37,		415,
+		119,	480,
+		37,		420,
 		37,		366,
 		40,		366,
 		40,		408,
-		93,		445
+		85,		440
 	};
 
 	down_left_ = App->physics->CreateChain(0, 0, down_left, 12);
 
 	int down_right[12] = {
 
-		180,	475,
-		271,	415,
+		180,	480,
+		271,	420,
 		271,	366,
 		268,	366,
 		268,	408,
-		212,	445
+		220,	440
 	};
 
 	down_right_ = App->physics->CreateChain(0, 0, down_right, 12);
@@ -730,7 +730,7 @@ void ModuleSceneIntro::DrawColliders()
 		269,	394
 	};
 
-	//rail.add(App->physics->CreateChain(0, 0, rail_right, 64));
+	rail.add(App->physics->CreateChain(0, 0, rail_right, 64));
 
 	int water_slide_in[74] = {
 
@@ -773,7 +773,7 @@ void ModuleSceneIntro::DrawColliders()
 		248,	385
 	};
 
-	//rail.add(App->physics->CreateChain(0, 0, water_slide_in, 74));
+	rail.add(App->physics->CreateChain(0, 0, water_slide_in, 74));
 
 	int water_slide[36] = {
 
@@ -891,12 +891,12 @@ void ModuleSceneIntro::DrawColliders()
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 {
-	l_kicker = App->physics->CreateKickers(100, 443, kicker1,14); //dyn
-	r_kicker = App->physics->CreateKickers(152, 443, kicker2, 14); //dyn
+	l_kicker = App->physics->CreateKickers(87, 440, kicker1,14); //dyn
+	r_kicker = App->physics->CreateKickers(165, 440, kicker2, 14); //dyn
 	tr_kicker = App->physics->CreateKickers(236, 265, kicker3, 14); //dyn
 
-	pivot_body1 = App->physics->CreatePivots(100, 448, 9);
-	pivot_body2 = App->physics->CreatePivots(205, 448, 9);
+	pivot_body1 = App->physics->CreatePivots(93, 447, 11);
+	pivot_body2 = App->physics->CreatePivots(217, 447, 11);
 	pivot_body3 = App->physics->CreatePivots(278, 270, 9);
 
 	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
