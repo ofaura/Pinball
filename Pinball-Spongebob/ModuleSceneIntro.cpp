@@ -131,7 +131,7 @@ update_status ModuleSceneIntro::Update()
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
 		spring->SetMaxMotorForce((m_box->body->GetPosition().y - PIXEL_TO_METERS(436))*25);//Transforms the position to the collision force with the ball
-		spring->SetMotorSpeed(-500.0f);
+		spring->SetMotorSpeed(-50.0f);
 	}
 
 	if (m_box->body->GetPosition().y < PIXEL_TO_METERS(436)) {
