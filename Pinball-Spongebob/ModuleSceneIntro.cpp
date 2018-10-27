@@ -52,8 +52,6 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
 	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
 
-	UpdateSensors();
-
 	//Blit score
 	App->fonts->BlitText(385, 190, score, "000", 0.5f);
 
@@ -117,7 +115,7 @@ update_status ModuleSceneIntro::Update()
 
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
-		spring->SetMaxMotorForce((m_box->body->GetPosition().y - PIXEL_TO_METERS(436))*25);//Transforms the position to the collision force with the ball
+		spring->SetMaxMotorForce((m_box->body->GetPosition().y - PIXEL_TO_METERS(436))*28);//Transforms the position to the collision force with the ball
 		spring->SetMotorSpeed(-50.0f);
 	}
 
@@ -146,7 +144,7 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	c = boxes.getFirst();
-
+	
 	while(c != NULL)
 	{
 		int x, y;
@@ -170,19 +168,248 @@ update_status ModuleSceneIntro::Update()
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
-	if (bodyB->sensor) {
+	if (bodyB->sensor_type != NONE) {
 		p2List_item<PhysBody*>* sensor;
 		sensor = App->scene_intro->sensors.getFirst();
 
 		for (sensor; sensor != nullptr; sensor = sensor->next) {
 			if (sensor->data == bodyB) {
-				sensor->data->active = true;
+				sensorAction(sensor->data);
 			}
 		}
 	}
 
-	App->audio->PlayFx(bonus_fx);
+	//App->audio->PlayFx(bonus_fx);
 }
+
+
+void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
+
+	p2List_item<PhysBody*>* c;
+	switch (sensor->sensor_type) {
+	case DISABLE_START_DOOR:
+		for (b2Fixture* f = door_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(true);
+		}
+		break;
+	case ACTIVE_START_DOOR:
+		for (b2Fixture* f = door_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(false);
+		}
+		break;
+	case TOP_LEFT_IN:
+		for (b2Fixture* f = top_left_wall_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(true);
+		}
+
+		c = lgreen_tube_entrance.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+		break;
+	case TOP_LEFT_OUT:
+		for (b2Fixture* f = top_left_wall_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(false);
+		}
+		break;
+	case TOP_RIGHT_IN:
+		for (b2Fixture* f = top_right_wall_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(true);
+		}
+		break;
+	case TOP_RIGHT_OUT:
+		for (b2Fixture* f = top_right_wall_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(false);
+		}
+		break;
+	case RAIL_IN:
+		c = rail.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+
+		c = base_layer.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+
+		c = lgreen_tube_entrance.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+		break;
+		
+	case RAIL_END:
+		c = rail.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+
+		c = base_layer.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+
+		c = lgreen_tube_entrance.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+		break;
+	case GREEN_TUBE_IN:
+
+		c = lgreen_tube_entrance.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+
+		c = rail.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+
+		c = base_layer.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+
+		c = lgreen_tube_exit.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+		break;
+	case GREEN_TUBE_MIDDLE:
+
+		c = lgreen_tube_entrance.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+
+		c = lgreen_tube_exit.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+
+		//ADD CONDITION TO TELEPORT THE BALL
+
+		break;
+	case GREEN_TUBE_OUT:
+
+		c = lgreen_tube_entrance.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+		
+		c = base_layer.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(false);
+			}
+			c = c->next;
+		}
+
+		c = lgreen_tube_exit.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+		break;
+	case LEFT_PERIMETER:
+
+		c = lgreen_tube_entrance.getFirst();
+		while (c != NULL)
+		{
+			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+			{
+				f->SetSensor(true);
+			}
+			c = c->next;
+		}
+	}
+
+}
+
 
 void ModuleSceneIntro::DrawColliders()
 {
@@ -223,18 +450,18 @@ void ModuleSceneIntro::DrawColliders()
 		303,	222
 	};
 
-	perimeter_init_ = App->physics->CreateChain(0, 0, perimeter_init, 64);
+	base_layer.add(App->physics->CreateChain(0, 0, perimeter_init, 64));
 
-	/*int door[4] = {
+	int door[4] = {
 
 		303,	222,
 		289,	246
-	};*/
+	};
 
-	/*door_ = App->physics->CreateChain(0, 0, door, 4);*/
+	door_ = App->physics->CreateChain(0, 0, door, 4);
 
 	int perimeter_final[14] = {
-		289,	246,
+		287,	248,
 		280,	260,
 		288,	272,
 		266,	300,
@@ -243,33 +470,9 @@ void ModuleSceneIntro::DrawColliders()
 		194,	500
 	};
 
-	perimeter_final_ = App->physics->CreateChain(0, 0, perimeter_final, 14);
+	base_layer.add(App->physics->CreateChain(0, 0, perimeter_final, 14));
 
-	int water_slide[40] = {
-
-		34,		192,
-		45,		217,
-		68,		252,
-		64,		256,
-		39,		220,
-		29,		193,
-		24,		164,
-		26,		133,
-		33,		105,
-		45,		81,
-		66,		57,
-		84,		40,
-		99,		32,
-		99,		52,
-		90,		57,
-		82,		143,
-		83,		151,
-		96,		163,
-		43,		132,
-		29,		116
-	};
-
-	water_slide_ = App->physics->CreateChain(0, 0, water_slide, 40);
+	
 
 	int mr_crabs[18] = {
 
@@ -324,7 +527,7 @@ void ModuleSceneIntro::DrawColliders()
 		277,	97
 	};
 
-	top_right_ = App->physics->CreateChain(0, 0, top_right, 68);
+	base_layer.add(App->physics->CreateChain(0, 0, top_right, 68));
 
 	int left_triangle[6] = {
 
@@ -371,7 +574,7 @@ void ModuleSceneIntro::DrawColliders()
 		121,	28
 	};
 
-	top_left_pill_ = App->physics->CreateChain(0, 0, top_left_pill, 14);
+	base_layer.add(App->physics->CreateChain(0, 0, top_left_pill, 14));
 
 	int top_right_pill[14] = {
 
@@ -384,22 +587,7 @@ void ModuleSceneIntro::DrawColliders()
 		147,	24
 	};
 
-	top_right_pill_ = App->physics->CreateChain(0, 0, top_right_pill, 14);
-
-	int bottom_water_slide[18] = {
-
-		74,		196,
-		100,	225,
-		98,		228,
-		72,		198,
-		72,		194,
-		45,		173,
-		36,		168,
-		13,		143,
-		6,		120
-	};
-
-	bottom_water_slide_ = App->physics->CreateChain(0, 0, bottom_water_slide, 18);
+	base_layer.add(App->physics->CreateChain(0, 0, top_right_pill, 14));
 
 	int down_left[12] = {
 
@@ -427,7 +615,7 @@ void ModuleSceneIntro::DrawColliders()
 
 	int top_left_wall[4] = {
 
-		97,		34,
+		97,		24,
 		91,		13
 	};
 
@@ -435,7 +623,7 @@ void ModuleSceneIntro::DrawColliders()
 
 	int top_right_wall[4] = {
 
-		179,	24,
+		179,	18,
 		181,	4
 	};
 
@@ -443,8 +631,8 @@ void ModuleSceneIntro::DrawColliders()
 
 	int right_limit[4] = {
 
-		303,	116,
-		303,	500
+		303,	436,
+		303,	230
 	};
 
 	right_limit_ = App->physics->CreateChain(0, 0, right_limit, 4);
@@ -457,7 +645,7 @@ void ModuleSceneIntro::DrawColliders()
 
 	left_limit_ = App->physics->CreateChain(0, 0, left_limit, 4);
 
-	int water_slide_out[64] = {
+	int rail_right[64] = {
 
 		68,		255,
 		45,		220,
@@ -493,7 +681,7 @@ void ModuleSceneIntro::DrawColliders()
 		269,	394
 	};
 
-	water_slide_out_ = App->physics->CreateChain(0, 0, water_slide_out, 64);
+	rail.add(App->physics->CreateChain(0, 0, rail_right, 64));
 
 	int water_slide_in[74] = {
 
@@ -536,11 +724,48 @@ void ModuleSceneIntro::DrawColliders()
 		248,	385
 	};
 
-	water_slide_in_ = App->physics->CreateChain(0, 0, water_slide_in, 74);
+	rail.add(App->physics->CreateChain(0, 0, water_slide_in, 74));
 
-	int green_tube_in[22] = {
+	int water_slide[36] = {
 
-		42,		372,
+		34,		192,
+		45,		217,
+		68,		252,
+		64,		256,
+		39,		220,
+		29,		193,
+		24,		164,
+		26,		133,
+		33,		105,
+		45,		81,
+		66,		57,
+		84,		40,
+		99,		32,
+		99,		52,
+		90,		57,
+		82,		143,
+		83,		151,
+		96,		163
+	};
+
+	base_layer.add(App->physics->CreateChain(0, 0, water_slide, 36));
+	
+	int greentube_bottom[18] = {
+
+		74,		196,
+		100,	225,
+		98,		228,
+		72,		198,
+		72,		194,
+		45,		173,
+		36,		168,
+		13,		143,
+		6,		120
+	};
+
+	lgreen_tube_entrance.add(App->physics->CreateChain(0, 0, greentube_bottom, 18));
+
+	int green_tube_up[20] = {
 		42,		33,
 		39,		22,
 		34,		18,
@@ -553,29 +778,22 @@ void ModuleSceneIntro::DrawColliders()
 		92,		163
 	};
 
-	green_tube_in_ = App->physics->CreateChain(0, 0, green_tube_in, 22);
+	lgreen_tube_entrance.add(App->physics->CreateChain(0, 0, green_tube_up, 20));
 
-	int green_tube_out[32] = {
+	int green_tube_out[4] = {
 
-		59,		367,
-		59,		27,
-		57,		16,
-		21,		8,
-		45,		2,
-		40,		0,
-		23,		0,
-		17,		2,
-		10,		8,
-		5,		17,
-		4,		30,
-		3,		90,
-		5,		117,
-		13,		142,
-		35,		167,
-		91,		200
+		59,		360,
+		59,		27
 	};
 
-	green_tube_out_ = App->physics->CreateChain(0, 0, green_tube_out, 32);
+	lgreen_tube_exit.add(App->physics->CreateChain(0, 0, green_tube_out, 4));
+
+	int green_tube_exit[4]{
+		39,		360,
+		39,		27
+	};
+
+	lgreen_tube_exit.add(App->physics->CreateChain(0, 0, green_tube_exit, 4));
 
 	//------CREATING KICKERS
 	int kicker_left[14] = {
@@ -609,7 +827,7 @@ void ModuleSceneIntro::DrawColliders()
 	};
 
 	create_kickers(kicker_left, kicker_right, kicker_topright);
-	288,	436,
+
 	m_box = App->physics->CreateRectangle(296, 436, 10, 10);//290, 436, 14, 10
 	m_box->body->SetGravityScale(0);
 	//m_box->body->SetLinearDamping(1.7f);
@@ -619,6 +837,7 @@ void ModuleSceneIntro::DrawColliders()
 	//s_box->body->SetLinearDamping(1.7f);
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
+
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
@@ -642,47 +861,40 @@ void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 
 void ModuleSceneIntro::create_sensors()
 {
-	sensors.add(App->physics->CreateRectangleSensor(298, 312, 17, 3, BALL)); 
+	sensors.add(App->physics->CreateRectangleSensor(298, 312, 17, 3, DISABLE_START_DOOR)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(298, 224, 17, 3, DOOR)); //door
+	sensors.add(App->physics->CreateRectangleSensor(298, 224, 17, 3, ACTIVE_START_DOOR)); //door
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(295, 198, 23, 3, RIGHT_PERIMETER));
+	sensors.add(App->physics->CreateRectangleSensor(295, 198, 23, 3, CROWN_OUT)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(211, 18, 10, 10, TOP_RIGHT));
+	sensors.add(App->physics->CreateRectangleSensor(211, 18, 10, 10, TOP_RIGHT_IN));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(181, 11, 5, 12, TOP_RIGHT_DOOR)); // top right
+	sensors.add(App->physics->CreateRectangleSensor(165, 11, 5, 12, TOP_RIGHT_OUT)); // top right
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(92, 21, 10, 12, TOP_LEFT_DOOR)); //top left
+	sensors.add(App->physics->CreateRectangleSensor(110, 21, 5, 12, TOP_LEFT_OUT)); //top left
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(62, 40, 10, 10, TOP_LEFT));
+	sensors.add(App->physics->CreateRectangleSensor(62, 40, 10, 10, TOP_LEFT_IN));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(258, 395, 17, 4, WATER_SLIDE_END)); //water_slide end
+	sensors.add(App->physics->CreateRectangleSensor(80, 240, 40, 4, RAIL_END)); //water_slide end
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(57, 208, 20, 20, WATER_SLIDE_BEGINNING)); //water_slide beginning
+	sensors.add(App->physics->CreateRectangleSensor(80, 240, 40, 4, RAIL_END)); //water_slide end
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(51, 395, 17, 4, GREEN_TUBE_END));
+	sensors.add(App->physics->CreateRectangleSensor(57, 208, 20, 20, RAIL_IN)); //water_slide beginning
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(75, 175, 15, 25, GREEN_TUBE_IN));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(10, 85, 15, 14, GREEN_TUBE_MIDDLE));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(51, 355, 17, 4, GREEN_TUBE_OUT));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(28, 395, 17, 4, LIGHT_BOTTOM));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(51, 395, 17, 4, LIGHT_BOTTOM));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(258, 395, 17, 4, LIGHT_BOTTOM)); //water_slide end
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(281, 395, 17, 4, LIGHT_BOTTOM)); //water_slide end
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(30, 230, 20, 20, LEFT_PERIMETER));
 	sensors.getLast()->data->listener = this;
-}
-
-void ModuleSceneIntro::UpdateSensors()
-{
-	int door[4] = {
-
-		303,	222,
-		289,	246
-	};
-
-	p2List_item<PhysBody*>* sensor;
-	sensor = sensors.getFirst();
-
-	for (sensor; sensor != nullptr; sensor = sensor->next)
-	{
-		if (sensor->data->active && sensor->data->sensor_type == DOOR)
-		{
-			door_ = App->physics->CreateChain(0, 0, door, 4);
-			sensor->data->active = false;
-		}
-	}
 }

@@ -12,7 +12,24 @@
 #define METERS_TO_PIXELS(m) ((int) floor(PIXELS_PER_METER * m))
 #define PIXEL_TO_METERS(p)  ((float) METER_PER_PIXEL * p)
 
-enum Sensors_List;
+enum Sensors_List {
+	NONE = -1,
+	DISABLE_START_DOOR,
+	ACTIVE_START_DOOR,
+	RAIL_IN,
+	RAIL_END,
+	CROWN_OUT,
+	LEFT_PERIMETER,
+	TOP_RIGHT_IN,
+	TOP_LEFT_IN,
+	TOP_RIGHT_OUT,
+	TOP_LEFT_OUT,
+	GREEN_TUBE_IN,
+	GREEN_TUBE_MIDDLE,
+	GREEN_TUBE_OUT,
+	LIGHT_BOTTOM
+};
+
 // Small class to return to other modules to track position and rotation of physics bodies
 class PhysBody
 {
@@ -23,13 +40,12 @@ public:
 	void GetPosition(int& x, int &y) const;
 	float GetRotation() const;
 	bool Contains(int x, int y) const;
-	bool active = false;
-	bool sensor = false;
-	Sensors_List sensor_type;
+
 
 	int RayCast(int x1, int y1, int x2, int y2, float& normal_x, float& normal_y) const;
 
 public:
+	Sensors_List sensor_type;
 	int width, height;
 	b2Body* body;
 	Module* listener;
@@ -61,19 +77,20 @@ public:
 	// b2ContactListener ---
 	void BeginContact(b2Contact* contact);
 
+	b2World* world;
 
 private:
 
 	bool debug;
-	b2World* world;
+	
 	b2MouseJoint* mouse_joint;
 	b2Body* ground;
 
 
-
+	
 
 public:
-
+	bool layer[6];
 	p2List<b2RevoluteJoint*> joints;
 	b2PrismaticJoint* spring;
 };

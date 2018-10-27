@@ -51,10 +51,12 @@ update_status ModulePhysics::PreUpdate()
 		{
 			PhysBody* pb1 = (PhysBody*)c->GetFixtureA()->GetBody()->GetUserData();
 			PhysBody* pb2 = (PhysBody*)c->GetFixtureB()->GetBody()->GetUserData();
-			if(pb1 && pb2 && pb1->listener)
+			if (pb1 && pb2 && pb1->listener) {
 				pb1->listener->OnCollision(pb1, pb2);
+			}
 		}
 	}
+
 
 	return UPDATE_CONTINUE;
 }
@@ -230,7 +232,6 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
-	pbody->sensor = true;
 	pbody->sensor_type = sensor;
 	b->SetUserData(pbody);
 	pbody->width = width;
@@ -333,10 +334,10 @@ update_status ModulePhysics::PostUpdate()
 					b2ChainShape* shape = (b2ChainShape*)f->GetShape();
 					b2Vec2 prev, v;
 
-					for(int32 i = 0; i < shape->m_count; ++i)
+					for (int32 i = 0; i < shape->m_count; ++i)
 					{
 						v = b->GetWorldPoint(shape->m_vertices[i]);
-						if(i > 0)
+						if (i > 0)
 							App->renderer->DrawLine(METERS_TO_PIXELS(prev.x), METERS_TO_PIXELS(prev.y), METERS_TO_PIXELS(v.x), METERS_TO_PIXELS(v.y), 100, 255, 100);
 						prev = v;
 					}
@@ -479,7 +480,7 @@ void ModulePhysics::BeginContact(b2Contact* contact)
 {
 	PhysBody* physA = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData();
 	PhysBody* physB = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData();
-
+	
 	if(physA && physA->listener != NULL)
 		physA->listener->OnCollision(physA, physB);
 

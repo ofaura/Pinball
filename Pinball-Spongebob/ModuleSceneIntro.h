@@ -8,20 +8,6 @@
 
 class PhysBody;
 
-enum Sensors_List {
-	NONE = -1,
-	BALL,
-	DOOR,
-	WATER_SLIDE_BEGINNING,
-	WATER_SLIDE_END,
-	RIGHT_PERIMETER,
-	LEFT_PERIMETER,
-	TOP_RIGHT,
-	TOP_LEFT,
-	TOP_RIGHT_DOOR,
-	TOP_LEFT_DOOR,
-	GREEN_TUBE_END
-};
 
 class ModuleSceneIntro : public Module
 {
@@ -33,10 +19,10 @@ public:
 	update_status Update();
 	bool CleanUp();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
+	void sensorAction(PhysBody * sensor);
 	void DrawColliders();
 	void create_kickers(int* kicker1, int* kicker2, int* kicker3);
 	void create_sensors();
-	void UpdateSensors();
 
 public:
 	p2List<PhysBody*> sensors;
@@ -44,6 +30,14 @@ public:
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
+
+	p2List<PhysBody*> base_layer;
+	p2List<PhysBody*> rail;
+	p2List<PhysBody*> lgreen_tube_exit;
+	p2List<PhysBody*> lgreen_tube_entrance;
+
+
+
 	int kickers[3];
 	PhysBody* perimeter_init_;
 	PhysBody* perimeter_final_;
@@ -53,7 +47,7 @@ public:
 	PhysBody* top_right_;
 	PhysBody* left_triangle_;
 	PhysBody* right_triangle_;
-	PhysBody*top_left_pill_;
+	PhysBody* top_left_pill_;
 	PhysBody* top_right_pill_;
 	PhysBody* kicker_;
 	PhysBody* left_triangle_bouncer_;
@@ -65,10 +59,6 @@ public:
 	PhysBody* top_right_wall_;
 	PhysBody* right_limit_;
 	PhysBody* left_limit_;
-	PhysBody* water_slide_out_;
-	PhysBody* water_slide_in_;
-	PhysBody* green_tube_in_;
-	PhysBody* green_tube_out_;
 	PhysBody* pivot_body1;
 	PhysBody* pivot_body2;
 	PhysBody* pivot_body3;
@@ -86,9 +76,18 @@ public:
 
 	SDL_Texture* base_map;
 	SDL_Texture* guides;
+	SDL_Texture* overlay_down;
+	SDL_Texture* bounce_hamburger;
+	SDL_Texture* overlay;
 	SDL_Texture* right_flipper;
+	SDL_Texture* left_flipper;
+	SDL_Texture* top_right_flipper;
+	SDL_Texture* ball;
+	SDL_Texture* slide;
 
 	iPoint position;
 
+	char player_lives[10];
 	int score = -1;
+	int lives_font = -1;
 };
