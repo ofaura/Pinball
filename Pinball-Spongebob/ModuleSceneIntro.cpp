@@ -26,14 +26,19 @@ bool ModuleSceneIntro::Start()
 	base_map = App->textures->Load("Assets/base.png");
 	guides = App->textures->Load("Assets/guides.png");
 	right_flipper = App->textures->Load("Assets/flipper.png");
-	circle = App->textures->Load("pinball/wheel.png"); 
+	circle = App->textures->Load("pinball/wheel.png");
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	DrawColliders();
+<<<<<<< HEAD
 	create_sensors();
 	
+=======
+
+
+>>>>>>> 25e8eb376a5208dd67983cb1ca06688739e8dcf9
 	return ret;
 }
 
@@ -58,13 +63,17 @@ update_status ModuleSceneIntro::Update()
 	App->fonts->BlitText(385, 190, score, "000", 0.5f);
 
 
-	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
+<<<<<<< HEAD
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 5, b2_dynamicBody));
+=======
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7, b2_dynamicBody));
+>>>>>>> 25e8eb376a5208dd67983cb1ca06688739e8dcf9
 		circles.getLast()->data->listener = this;
 	}
 
-	if(App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
+	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
 		boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
 	}
@@ -72,19 +81,19 @@ update_status ModuleSceneIntro::Update()
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
 		//Activate the motor ESSENTIAL STEP
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
-		
+
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(50.0f);
-		
-		item = item->next; 
+
+		item = item->next;
 
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(50.0f);
 
 	}
-	else if(App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_IDLE){
+	else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_IDLE) {
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
-		
+
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(-50.0f);
 
@@ -108,6 +117,25 @@ update_status ModuleSceneIntro::Update()
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(50.0f);
 	}
+	
+	b2PrismaticJoint* spring = App->physics->spring;
+
+	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN) {
+		spring->SetMaxMotorForce(5.0f);
+		spring->SetMotorSpeed(2.0f);
+
+	}
+	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
+		spring->SetMaxMotorForce((m_box->body->GetPosition().y - PIXEL_TO_METERS(436))*25);//Transforms the position to the collision force with the ball
+		spring->SetMotorSpeed(-500.0f);
+	}
+
+	if (m_box->body->GetPosition().y < PIXEL_TO_METERS(436)) {
+		m_box->body->SetTransform({ PIXEL_TO_METERS(296), PIXEL_TO_METERS(436)}, 0);
+		spring->SetMotorSpeed(0.0f);
+	}else
+		m_box->body->SetTransform({ PIXEL_TO_METERS(296), m_box->body->GetPosition().y }, 0);
+	
 
 	// Prepare for raycast ------------------------------------------------------
 	
@@ -145,10 +173,6 @@ update_status ModuleSceneIntro::Update()
 		App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
 		c = c->next;
 	}
-
-	int x_box, y_box;
-	s_box->body->SetTransform({ PIXEL_TO_METERS(300), PIXEL_TO_METERS(436) }, 0);
-	m_box->body->SetTransform({ PIXEL_TO_METERS(300), m_box->body->GetPosition().y }, 0);
 	
 	return UPDATE_CONTINUE;
 }
@@ -223,8 +247,8 @@ void ModuleSceneIntro::DrawColliders()
 		280,	260,
 		288,	272,
 		266,	300,
-		289,	354,
-		289,	438,
+		288,	354,
+		288,	438,
 		194,	500
 	};
 
@@ -434,13 +458,13 @@ void ModuleSceneIntro::DrawColliders()
 
 	right_limit_ = App->physics->CreateChain(0, 0, right_limit, 4);
 
-	int ball_base[4] = {
+	int left_limit[4] = {
 
 		288,	436,
-		311,	436
+		288,	250
 	};
 
-	ball_base_ = App->physics->CreateChain(0, 0, ball_base, 4);
+	left_limit_ = App->physics->CreateChain(0, 0, left_limit, 4);
 
 	int water_slide_out[64] = {
 
@@ -594,14 +618,14 @@ void ModuleSceneIntro::DrawColliders()
 	};
 
 	create_kickers(kicker_left, kicker_right, kicker_topright);
-
-	m_box = App->physics->CreateRectangle(300, 436, 14, 10);//290, 436, 14, 10
+	288,	436,
+	m_box = App->physics->CreateRectangle(296, 436, 10, 10);//290, 436, 14, 10
 	m_box->body->SetGravityScale(0);
-	m_box->body->SetLinearDamping(1.75f);
+	//m_box->body->SetLinearDamping(1.7f);
 
-	s_box = App->physics->CreateRectangle(300, 436, 14, 10);//290, 460, 14, 10
+	s_box = App->physics->CreateRectangle(296, 436, 10, 10,b2_staticBody);//290, 460, 14, 10
 	s_box->body->SetGravityScale(0);
-	s_box->body->SetLinearDamping(1.75f);
+	//s_box->body->SetLinearDamping(1.7f);
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 }

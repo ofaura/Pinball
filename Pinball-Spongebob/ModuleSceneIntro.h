@@ -64,7 +64,7 @@ public:
 	PhysBody* top_left_wall_;
 	PhysBody* top_right_wall_;
 	PhysBody* right_limit_;
-	PhysBody* ball_base_;
+	PhysBody* left_limit_;
 	PhysBody* water_slide_out_;
 	PhysBody* water_slide_in_;
 	PhysBody* green_tube_in_;
