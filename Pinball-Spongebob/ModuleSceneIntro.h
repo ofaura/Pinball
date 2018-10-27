@@ -45,7 +45,8 @@ public:
 	PhysBody* ball_base_;
 	PhysBody* water_slide_out_;
 	PhysBody* water_slide_in_;
-
+	PhysBody* green_tube_in_;
+	PhysBody* green_tube_out_;
 	PhysBody* pivot_body1;
 	PhysBody* pivot_body2;
 	PhysBody* pivot_body3;

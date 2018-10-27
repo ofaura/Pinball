@@ -498,6 +498,45 @@ void ModuleSceneIntro::DrawColliders()
 
 	water_slide_in_ = App->physics->CreateChain(0, 0, water_slide_in, 74);
 
+	int green_tube_in[22] = {
+
+		42,		372,
+		42,		33,
+		39,		22,
+		34,		18,
+		29,		18,
+		25,		22,
+		21,		29,
+		21,		99,
+		28,		116,
+		44,		133,
+		92,		163
+	};
+
+	green_tube_in_ = App->physics->CreateChain(0, 0, green_tube_in, 22);
+
+	int green_tube_out[32] = {
+
+		59,		367,
+		59,		27,
+		57,		16,
+		21,		8,
+		45,		2,
+		40,		0,
+		23,		0,
+		17,		2,
+		10,		8,
+		5,		17,
+		4,		30,
+		3,		90,
+		5,		117,
+		13,		142,
+		35,		167,
+		91,		200
+	};
+
+	green_tube_out_ = App->physics->CreateChain(0, 0, green_tube_out, 32);
+
 	//------CREATING KICKERS
 	int kicker_left[14] = {
 		1, 6,
