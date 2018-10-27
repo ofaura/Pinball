@@ -43,6 +43,8 @@ public:
 	PhysBody* top_right_wall_;
 	PhysBody* right_limit_;
 	PhysBody* ball_base_;
+	PhysBody* water_slide_out_;
+	PhysBody* water_slide_in_;
 
 	PhysBody* pivot_body1;
 	PhysBody* pivot_body2;
