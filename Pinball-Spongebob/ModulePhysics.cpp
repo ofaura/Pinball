@@ -70,10 +70,8 @@ void ModulePhysics::createPrismatic(b2Body* bodyA, b2Body* bodyB) {
 	pDef.enableMotor = true;
 
 	pDef.enableLimit = true;
-	pDef.lowerTranslation = PIXEL_TO_METERS(-5);
+	pDef.lowerTranslation = 0;//PIXEL_TO_METERS(-5);
 	pDef.upperTranslation = 50 / 32;
-	//pDef.upperTranslation = 50/32;
-	//pDef->localAxisA.Set(0, 1);
 	
 	spring = (b2PrismaticJoint*)world->CreateJoint(&pDef);
 }
