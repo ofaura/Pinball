@@ -36,9 +36,12 @@ bool ModuleSceneIntro::Start()
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
-	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	ball = App->textures->Load("Assets/ball.png");
 	slide = App->textures->Load("Assets/water_slide.png");
+
+	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
+	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
+
 	DrawColliders();
 	create_sensors();
 
@@ -76,7 +79,10 @@ update_status ModuleSceneIntro::Update()
 	UpdateSensors();
 
 	//Blit score
-	App->fonts->BlitText(385, 190, score, "000", 0.5f);
+	sprintf_s(player_lives, 10, "%d", App->player->lives);
+
+	App->fonts->BlitText(385, 190, score, "000", 0.7f);
+	App->fonts->BlitText(470, 242, lives_font, player_lives, 0.5f);
 
 	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{

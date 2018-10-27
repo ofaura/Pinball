@@ -98,7 +98,7 @@ void ModuleFonts::BlitText(int x, int y, int font_id, const char* text, float sc
 				section.y = (row - 1) * fonts[font_id].char_h;
 				section.h = fonts[font_id].char_h;
 				section.w = fonts[font_id].char_w;
-				App->renderer->Blit(fonts[font_id].graphic, x + (i * fonts[font_id].char_w * scale), y, &section, scale);
+				App->renderer->Blit(fonts[font_id].graphic, x + (i * fonts[font_id].char_w * scale), y , &section, scale);
 				break;
 			}
 		}

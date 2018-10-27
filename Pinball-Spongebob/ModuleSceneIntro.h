@@ -97,5 +97,7 @@ public:
 
 	iPoint position;
 
+	char player_lives[10];
 	int score = -1;
+	int lives_font = -1;
 };
