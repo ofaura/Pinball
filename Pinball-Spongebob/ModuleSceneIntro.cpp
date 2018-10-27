@@ -32,18 +32,21 @@ bool ModuleSceneIntro::Start()
 	left_flipper = App->textures->Load("Assets/flipper.png");
 	right_flipper = App->textures->Load("Assets/flipper_right.png");
 	top_right_flipper = App->textures->Load("Assets/flipper_topright.png");
-	circle = App->textures->Load("pinball/wheel.png");
-	box = App->textures->Load("pinball/crate.png");
-	rick = App->textures->Load("pinball/rick_head.png");
-	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	//circle = App->textures->Load("pinball/wheel.png");
+	//box = App->textures->Load("pinball/crate.png");
+	//rick = App->textures->Load("pinball/rick_head.png");
 	ball = App->textures->Load("Assets/ball.png");
 	slide = App->textures->Load("Assets/water_slide.png");
+	ball_text = App->textures->Load("Assets/ball_text.png");
+	sound = App->textures->Load("Assets/sound.png");
 
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
+	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+
 	DrawColliders();
-	create_sensors();
+	create_sensors();		
 
 	return ret;
 }
@@ -53,7 +56,21 @@ bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
 	App->textures->Unload(base_map);
+	App->textures->Unload(guides);
+	App->textures->Unload(overlay_down);
+	App->textures->Unload(bounce_hamburger);
+	App->textures->Unload(overlay);
+	App->textures->Unload(left_flipper);
+	App->textures->Unload(right_flipper);
+	App->textures->Unload(top_right_flipper);
+	App->textures->Unload(ball);
+	App->textures->Unload(slide);
+	App->textures->Unload(ball_text);
+	App->textures->Unload(sound);
+
 	App->fonts->Unload(score);
+	App->fonts->Unload(lives_font);
+
 	return true;
 }
 
@@ -75,6 +92,8 @@ update_status ModuleSceneIntro::Update()
 	
 	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
 	App->renderer->Blit(overlay, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(ball_text, 415, 244, NULL, 1.0f);
+	App->renderer->Blit(sound, 325, 244, NULL, 1.0f);
 
 	//Blit score
 	sprintf_s(player_lives, 10, "%d", App->player->lives);
@@ -209,7 +228,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 	}
 
-	//App->audio->PlayFx(bonus_fx);
+	App->audio->PlayFx(bonus_fx);
 }
 
 
@@ -487,7 +506,7 @@ void ModuleSceneIntro::DrawColliders()
 		289,	246
 	};
 
-	door_ = App->physics->CreateChain(0, 0, door, 4);
+	//door_ = App->physics->CreateChain(0, 0, door, 4);
 
 	int perimeter_final[14] = {
 		285,	246,
@@ -709,7 +728,7 @@ void ModuleSceneIntro::DrawColliders()
 		269,	394
 	};
 
-	rail.add(App->physics->CreateChain(0, 0, rail_right, 64));
+	//rail.add(App->physics->CreateChain(0, 0, rail_right, 64));
 
 	int water_slide_in[74] = {
 
@@ -752,7 +771,7 @@ void ModuleSceneIntro::DrawColliders()
 		248,	385
 	};
 
-	rail.add(App->physics->CreateChain(0, 0, water_slide_in, 74));
+	//rail.add(App->physics->CreateChain(0, 0, water_slide_in, 74));
 
 	int water_slide[36] = {
 
