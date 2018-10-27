@@ -4,8 +4,24 @@
 #include "p2Point.h"
 #include "Globals.h"
 #include "Box2D/Box2D/Box2D.h"
+#include "ModuleTextures.h"
 
 class PhysBody;
+
+enum Sensors_List {
+	NONE = -1,
+	BALL,
+	DOOR,
+	WATER_SLIDE_BEGINNING,
+	WATER_SLIDE_END,
+	RIGHT_PERIMETER,
+	LEFT_PERIMETER,
+	TOP_RIGHT,
+	TOP_LEFT,
+	TOP_RIGHT_DOOR,
+	TOP_LEFT_DOOR,
+	GREEN_TUBE_END
+};
 
 class ModuleSceneIntro : public Module
 {
@@ -19,13 +35,19 @@ public:
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 	void DrawColliders();
 	void create_kickers(int* kicker1, int* kicker2, int* kicker3);
+	void create_sensors();
+	void UpdateSensors();
 
 public:
+	p2List<PhysBody*> sensors;
+
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
 	int kickers[3];
-	PhysBody* perimeter_;
+	PhysBody* perimeter_init_;
+	PhysBody* perimeter_final_;
+	PhysBody* door_;
 	PhysBody* water_slide_;
 	PhysBody* mr_crabs_;
 	PhysBody* top_right_;

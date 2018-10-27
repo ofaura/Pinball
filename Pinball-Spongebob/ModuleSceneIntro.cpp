@@ -32,7 +32,7 @@ bool ModuleSceneIntro::Start()
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	DrawColliders();
-
+	create_sensors();
 
 	return ret;
 }
@@ -51,6 +51,8 @@ update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
 	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
+
+	UpdateSensors();
 
 	//Blit score
 	App->fonts->BlitText(385, 190, score, "000", 0.5f);
@@ -168,13 +170,24 @@ update_status ModuleSceneIntro::Update()
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 {
+	if (bodyB->sensor) {
+		p2List_item<PhysBody*>* sensor;
+		sensor = App->scene_intro->sensors.getFirst();
+
+		for (sensor; sensor != nullptr; sensor = sensor->next) {
+			if (sensor->data == bodyB) {
+				sensor->data->active = true;
+			}
+		}
+	}
+
 	App->audio->PlayFx(bonus_fx);
 }
 
 void ModuleSceneIntro::DrawColliders()
 {
 
-	int perimeter[78] = {
+	int perimeter_init[64] = {
 
 		110,	500,
 		16,		439,
@@ -207,17 +220,30 @@ void ModuleSceneIntro::DrawColliders()
 		299,	96,
 		308,	120,
 		308,	193,
-		300,	223,
-		291,	246,
+		303,	222
+	};
+
+	perimeter_init_ = App->physics->CreateChain(0, 0, perimeter_init, 64);
+
+	/*int door[4] = {
+
+		303,	222,
+		289,	246
+	};*/
+
+	/*door_ = App->physics->CreateChain(0, 0, door, 4);*/
+
+	int perimeter_final[14] = {
+		289,	246,
 		280,	260,
 		288,	272,
 		266,	300,
 		288,	354,
 		288,	438,
 		194,	500
-
 	};
-	perimeter_ = App->physics->CreateChain(0, 0, perimeter, 78);
+
+	perimeter_final_ = App->physics->CreateChain(0, 0, perimeter_final, 14);
 
 	int water_slide[40] = {
 
@@ -308,7 +334,6 @@ void ModuleSceneIntro::DrawColliders()
 	};
 
 	left_triangle_ = App->physics->CreateChain(0, 0, left_triangle, 6);
-
 
 	int left_triangle_bouncer[4] = {
 
@@ -613,4 +638,51 @@ void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 	//l_kicker->GetPosition(position.x, position.y);
 	App->renderer->Blit(right_flipper, 0, 0, NULL, 1.0f);
 
+}
+
+void ModuleSceneIntro::create_sensors()
+{
+	sensors.add(App->physics->CreateRectangleSensor(298, 312, 17, 3, BALL)); 
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(298, 224, 17, 3, DOOR)); //door
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(295, 198, 23, 3, RIGHT_PERIMETER));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(211, 18, 10, 10, TOP_RIGHT));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(181, 11, 5, 12, TOP_RIGHT_DOOR)); // top right
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(92, 21, 10, 12, TOP_LEFT_DOOR)); //top left
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(62, 40, 10, 10, TOP_LEFT));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(258, 395, 17, 4, WATER_SLIDE_END)); //water_slide end
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(57, 208, 20, 20, WATER_SLIDE_BEGINNING)); //water_slide beginning
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(51, 395, 17, 4, GREEN_TUBE_END));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(30, 230, 20, 20, LEFT_PERIMETER));
+	sensors.getLast()->data->listener = this;
+}
+
+void ModuleSceneIntro::UpdateSensors()
+{
+	int door[4] = {
+
+		303,	222,
+		289,	246
+	};
+
+	p2List_item<PhysBody*>* sensor;
+	sensor = sensors.getFirst();
+
+	for (sensor; sensor != nullptr; sensor = sensor->next)
+	{
+		if (sensor->data->active && sensor->data->sensor_type == DOOR)
+		{
+			door_ = App->physics->CreateChain(0, 0, door, 4);
+			sensor->data->active = false;
+		}
+	}
 }

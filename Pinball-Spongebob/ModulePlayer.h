@@ -13,6 +13,7 @@ public:
 	update_status Update();
 	bool CleanUp();
 
-public:
+private:
+
 
 };
