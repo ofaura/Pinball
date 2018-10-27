@@ -43,7 +43,8 @@ bool ModuleSceneIntro::Start()
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
 	DrawColliders();
-	create_sensors();
+	create_sensors(); 
+	resetLayers();
 
 	return ret;
 }
@@ -897,15 +898,15 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(110, 21, 5, 12, TOP_LEFT_OUT)); //top left
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(62, 40, 10, 10, TOP_LEFT_IN));
+	sensors.add(App->physics->CreateRectangleSensor(80, 25, 10, 10, TOP_LEFT_IN));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(80, 230, 40, 4, RAIL_IN)); //water_slide end
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(80, 240, 40, 4, RAIL_END)); //water_slide end
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(80, 240, 40, 4, RAIL_END)); //water_slide end
+	sensors.add(App->physics->CreateRectangleSensor(258, 375, 17, 4, RAIL_END)); //water_slide beginning
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(57, 208, 20, 20, RAIL_IN)); //water_slide beginning
-	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(75, 175, 15, 25, GREEN_TUBE_IN));
+	sensors.add(App->physics->CreateRectangleSensor(78, 175, 12, 25, GREEN_TUBE_IN));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(10, 85, 15, 14, GREEN_TUBE_MIDDLE));
 	sensors.getLast()->data->listener = this;
@@ -921,4 +922,49 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(30, 230, 20, 20, LEFT_PERIMETER));
 	sensors.getLast()->data->listener = this;
+}
+
+void ModuleSceneIntro::resetLayers() {
+
+	p2List_item<PhysBody*>* c;
+
+	c = lgreen_tube_entrance.getFirst();
+	while (c != NULL)
+	{
+		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(false);
+		}
+		c = c->next;
+	}
+
+	c = rail.getFirst();
+	while (c != NULL)
+	{
+		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(true);
+		}
+		c = c->next;
+	}
+
+	c = base_layer.getFirst();
+	while (c != NULL)
+	{
+		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(false);
+		}
+		c = c->next;
+	}
+
+	c = lgreen_tube_exit.getFirst();
+	while (c != NULL)
+	{
+		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(true);
+		}
+		c = c->next;
+	}
 }

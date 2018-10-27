@@ -24,6 +24,8 @@ public:
 	void create_kickers(int* kicker1, int* kicker2, int* kicker3);
 	void create_sensors();
 
+	void resetLayers();
+
 public:
 	p2List<PhysBody*> sensors;
 
