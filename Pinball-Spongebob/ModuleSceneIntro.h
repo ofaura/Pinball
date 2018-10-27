@@ -86,7 +86,14 @@ public:
 
 	SDL_Texture* base_map;
 	SDL_Texture* guides;
+	SDL_Texture* overlay_down;
+	SDL_Texture* bounce_hamburger;
+	SDL_Texture* overlay;
 	SDL_Texture* right_flipper;
+	SDL_Texture* left_flipper;
+	SDL_Texture* top_right_flipper;
+	SDL_Texture* ball;
+	SDL_Texture* slide;
 
 	iPoint position;
 
