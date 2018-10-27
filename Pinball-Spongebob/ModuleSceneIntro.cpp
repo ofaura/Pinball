@@ -25,6 +25,7 @@ bool ModuleSceneIntro::Start()
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	base_map = App->textures->Load("Assets/base.png");
 	guides = App->textures->Load("Assets/guides.png");
+	right_flipper = App->textures->Load("Assets/flipper.png");
 	circle = App->textures->Load("pinball/wheel.png");
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
@@ -50,13 +51,14 @@ update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
 	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
+
 	//Blit score
 	App->fonts->BlitText(385, 190, score, "000", 0.5f);
 
 
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 5, b2_dynamicBody));
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7, b2_dynamicBody));
 		circles.getLast()->data->listener = this;
 	}
 
@@ -108,7 +110,6 @@ update_status ModuleSceneIntro::Update()
 	b2PrismaticJoint* spring = App->physics->spring;
 
 	if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_DOWN) {
-		m_box->body->SetTransform({ PIXEL_TO_METERS(300),PIXEL_TO_METERS(436) }, 0);
 		spring->SetMaxMotorForce(5.0f);
 		spring->SetMotorSpeed(2.0f);
 
@@ -119,10 +120,10 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	if (m_box->body->GetPosition().y < PIXEL_TO_METERS(436)) {
-		m_box->body->SetTransform({ PIXEL_TO_METERS(300), PIXEL_TO_METERS(436)}, 0);
+		m_box->body->SetTransform({ PIXEL_TO_METERS(296), PIXEL_TO_METERS(436)}, 0);
 		spring->SetMotorSpeed(0.0f);
 	}else
-		m_box->body->SetTransform({ PIXEL_TO_METERS(300), m_box->body->GetPosition().y }, 0);
+		m_box->body->SetTransform({ PIXEL_TO_METERS(296), m_box->body->GetPosition().y }, 0);
 	
 
 	// Prepare for raycast ------------------------------------------------------
@@ -211,8 +212,8 @@ void ModuleSceneIntro::DrawColliders()
 		280,	260,
 		288,	272,
 		266,	300,
-		289,	354,
-		289,	438,
+		288,	354,
+		288,	438,
 		194,	500
 
 	};
@@ -415,6 +416,142 @@ void ModuleSceneIntro::DrawColliders()
 
 	top_right_wall_ = App->physics->CreateChain(0, 0, top_right_wall, 4);
 
+	int right_limit[4] = {
+
+		303,	116,
+		303,	500
+	};
+
+	right_limit_ = App->physics->CreateChain(0, 0, right_limit, 4);
+
+	int left_limit[4] = {
+
+		288,	436,
+		288,	250
+	};
+
+	left_limit_ = App->physics->CreateChain(0, 0, left_limit, 4);
+
+	int water_slide_out[64] = {
+
+		68,		255,
+		45,		220,
+		34,		200,
+		24,		167,
+		21,		135,
+		23,		115,
+		27,		101,
+		34,		84,
+		41,		71,
+		52,		57,
+		66,		45,
+		96,		28,
+		130,	18,
+		166,	17,
+		196,	19,
+		223,	30,
+		248,	48,
+		266,	73,
+		279,	99,
+		287,	127,
+		287,	157,
+		280,	184,
+		273,	204,
+		262,	223,
+		241,	246,
+		233,	259,
+		233,	276,
+		240,	291,
+		264,	313,
+		268,	328,
+		269,	344,
+		269,	394
+	};
+
+	water_slide_out_ = App->physics->CreateChain(0, 0, water_slide_out, 64);
+
+	int water_slide_in[74] = {
+
+		104,	237,
+		73,		199,
+		63,		175,
+		55,		149,
+		55,		130,
+		57,		114,
+		62,		97,
+		72,		78,
+		88,		61,
+		104,	47,
+		133,	39,
+		148,	37,
+		160,	37,
+		174,	38,
+		186,	40,
+		200,	44,
+		216,	52,
+		231,	63,
+		243,	76,
+		253,	93,
+		259,	111,
+		264,	130,
+		264,	147,
+		263,	165,
+		260,	181,
+		253,	198,
+		243,	213,
+		230,	227,
+		218,	243,
+		211,	259,
+		209,	275,
+		213,	288,
+		222,	301,
+		233,	314,
+		243,	325,
+		248,	339,
+		248,	385
+	};
+
+	water_slide_in_ = App->physics->CreateChain(0, 0, water_slide_in, 74);
+
+	int green_tube_in[22] = {
+
+		42,		372,
+		42,		33,
+		39,		22,
+		34,		18,
+		29,		18,
+		25,		22,
+		21,		29,
+		21,		99,
+		28,		116,
+		44,		133,
+		92,		163
+	};
+
+	green_tube_in_ = App->physics->CreateChain(0, 0, green_tube_in, 22);
+
+	int green_tube_out[32] = {
+
+		59,		367,
+		59,		27,
+		57,		16,
+		21,		8,
+		45,		2,
+		40,		0,
+		23,		0,
+		17,		2,
+		10,		8,
+		5,		17,
+		4,		30,
+		3,		90,
+		5,		117,
+		13,		142,
+		35,		167,
+		91,		200
+	};
+
+	green_tube_out_ = App->physics->CreateChain(0, 0, green_tube_out, 32);
+
 	//------CREATING KICKERS
 	int kicker_left[14] = {
 		1, 6,
@@ -447,12 +584,12 @@ void ModuleSceneIntro::DrawColliders()
 	};
 
 	create_kickers(kicker_left, kicker_right, kicker_topright);
-
-	m_box = App->physics->CreateRectangle(300, 436, 20, 20);//290, 436, 14, 10
+	288,	436,
+	m_box = App->physics->CreateRectangle(296, 436, 10, 10);//290, 436, 14, 10
 	m_box->body->SetGravityScale(0);
 	//m_box->body->SetLinearDamping(1.7f);
 
-	s_box = App->physics->CreateRectangle(300, 436, 20, 20,b2_staticBody);//290, 460, 14, 10
+	s_box = App->physics->CreateRectangle(296, 436, 10, 10,b2_staticBody);//290, 460, 14, 10
 	s_box->body->SetGravityScale(0);
 	//s_box->body->SetLinearDamping(1.7f);
 
@@ -472,4 +609,8 @@ void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
 	App->physics->createJoint(pivot_body2->body, r_kicker->body, -0.25f, 0.16f);
 	App->physics->createJoint(pivot_body3->body, tr_kicker->body, -0.25f, 0.0f);
+
+	//l_kicker->GetPosition(position.x, position.y);
+	App->renderer->Blit(right_flipper, 0, 0, NULL, 1.0f);
+
 }

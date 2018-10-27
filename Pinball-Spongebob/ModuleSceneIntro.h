@@ -41,7 +41,12 @@ public:
 	PhysBody* down_right_;
 	PhysBody* top_left_wall_;
 	PhysBody* top_right_wall_;
-
+	PhysBody* right_limit_;
+	PhysBody* left_limit_;
+	PhysBody* water_slide_out_;
+	PhysBody* water_slide_in_;
+	PhysBody* green_tube_in_;
+	PhysBody* green_tube_out_;
 	PhysBody* pivot_body1;
 	PhysBody* pivot_body2;
 	PhysBody* pivot_body3;
@@ -59,6 +64,9 @@ public:
 
 	SDL_Texture* base_map;
 	SDL_Texture* guides;
+	SDL_Texture* right_flipper;
+
+	iPoint position;
 
 	int score = -1;
 };
