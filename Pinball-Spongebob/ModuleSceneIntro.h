@@ -92,6 +92,8 @@ public:
 	SDL_Texture* top_right_flipper;
 	SDL_Texture* ball;
 	SDL_Texture* slide;
+	SDL_Texture* ball_text;
+	SDL_Texture* sound;
 
 	iPoint position;
 

@@ -32,12 +32,13 @@ bool ModuleSceneIntro::Start()
 	left_flipper = App->textures->Load("Assets/flipper.png");
 	right_flipper = App->textures->Load("Assets/flipper_right.png");
 	top_right_flipper = App->textures->Load("Assets/flipper_topright.png");
-	circle = App->textures->Load("pinball/wheel.png");
-	box = App->textures->Load("pinball/crate.png");
-	rick = App->textures->Load("pinball/rick_head.png");
-	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	//circle = App->textures->Load("pinball/wheel.png");
+	//box = App->textures->Load("pinball/crate.png");
+	//rick = App->textures->Load("pinball/rick_head.png");
 	ball = App->textures->Load("Assets/ball.png");
 	slide = App->textures->Load("Assets/water_slide.png");
+	ball_text = App->textures->Load("Assets/ball_text.png");
+	sound = App->textures->Load("Assets/sound.png");
 
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
@@ -47,9 +48,12 @@ bool ModuleSceneIntro::Start()
 	activeLayers[green_tube_entrance] = true;
 	activeLayers[green_tube_exit] = true;
 
+	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+
 	DrawColliders();
-	create_sensors(); 
+	create_sensors();		
 	resetLayers();
+
 
 	return ret;
 }
@@ -59,7 +63,21 @@ bool ModuleSceneIntro::CleanUp()
 {
 	LOG("Unloading Intro scene");
 	App->textures->Unload(base_map);
+	App->textures->Unload(guides);
+	App->textures->Unload(overlay_down);
+	App->textures->Unload(bounce_hamburger);
+	App->textures->Unload(overlay);
+	App->textures->Unload(left_flipper);
+	App->textures->Unload(right_flipper);
+	App->textures->Unload(top_right_flipper);
+	App->textures->Unload(ball);
+	App->textures->Unload(slide);
+	App->textures->Unload(ball_text);
+	App->textures->Unload(sound);
+
 	App->fonts->Unload(score);
+	App->fonts->Unload(lives_font);
+
 	return true;
 }
 
@@ -81,6 +99,8 @@ update_status ModuleSceneIntro::Update()
 	
 	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
 	App->renderer->Blit(overlay, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(ball_text, 415, 244, NULL, 1.0f);
+	App->renderer->Blit(sound, 325, 244, NULL, 1.0f);
 
 	//Blit score
 	sprintf_s(player_lives, 10, "%d", App->player->lives);
@@ -191,13 +211,13 @@ update_status ModuleSceneIntro::Update()
 	int x, y;
 
 	l_kicker->GetPosition(x, y);
-	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(93), PIXEL_TO_METERS(447));
 
 	tr_kicker->GetPosition(x, y);
-	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(217), PIXEL_TO_METERS(447));
 	
 	r_kicker->GetPosition(x, y);
-	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(100), PIXEL_TO_METERS(448));
+	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(278), PIXEL_TO_METERS(270));
 
 	return UPDATE_CONTINUE;
 }
@@ -215,7 +235,7 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		}
 	}
 
-	//App->audio->PlayFx(bonus_fx);
+	App->audio->PlayFx(bonus_fx);
 }
 
 
@@ -482,24 +502,24 @@ void ModuleSceneIntro::DrawColliders()
 
 	int down_left[12] = {
 
-		119,	475,
-		37,		415,
+		119,	480,
+		37,		420,
 		37,		366,
 		40,		366,
 		40,		408,
-		93,		445
+		85,		440
 	};
 
 	down_left_ = App->physics->CreateChain(0, 0, down_left, 12);
 
 	int down_right[12] = {
 
-		180,	475,
-		271,	415,
+		180,	480,
+		271,	420,
 		271,	366,
 		268,	366,
 		268,	408,
-		212,	445
+		220,	440
 	};
 
 	down_right_ = App->physics->CreateChain(0, 0, down_right, 12);
@@ -732,12 +752,12 @@ void ModuleSceneIntro::DrawColliders()
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 {
-	l_kicker = App->physics->CreateKickers(100, 443, kicker1,14); //dyn
-	r_kicker = App->physics->CreateKickers(152, 443, kicker2, 14); //dyn
+	l_kicker = App->physics->CreateKickers(87, 440, kicker1,14); //dyn
+	r_kicker = App->physics->CreateKickers(165, 440, kicker2, 14); //dyn
 	tr_kicker = App->physics->CreateKickers(236, 265, kicker3, 14); //dyn
 
-	pivot_body1 = App->physics->CreatePivots(100, 448, 9);
-	pivot_body2 = App->physics->CreatePivots(205, 448, 9);
+	pivot_body1 = App->physics->CreatePivots(93, 447, 11);
+	pivot_body2 = App->physics->CreatePivots(217, 447, 11);
 	pivot_body3 = App->physics->CreatePivots(278, 270, 9);
 
 	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
