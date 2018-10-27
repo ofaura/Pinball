@@ -7,7 +7,12 @@
 #include "ModuleTextures.h"
 
 class PhysBody;
-
+enum layers {
+	bottom_layer,
+	rail_layer,
+	green_tube_exit,
+	green_tube_entrance
+};
 
 class ModuleSceneIntro : public Module
 {
@@ -37,6 +42,7 @@ public:
 	p2List<PhysBody*> rail;
 	p2List<PhysBody*> lgreen_tube_exit;
 	p2List<PhysBody*> lgreen_tube_entrance;
+	int activeLayers[4];
 
 
 

@@ -124,6 +124,7 @@ PhysBody* ModulePhysics::CreatePivots(int x,int y,int diameter) {
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = pivot_body;
+	pbody->sensor_type = NONE;
 	pivot_body->SetUserData(pbody);
 
 	return pbody;
@@ -156,6 +157,7 @@ PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->sensor_type = NONE;
 	b->SetUserData(pbody);
 	pbody->height = pbody->width = 0;
 
@@ -181,6 +183,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type)
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->sensor_type = NONE;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = radius;
 
@@ -206,6 +209,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
 	b->SetUserData(pbody);
+	pbody->sensor_type = NONE;
 	pbody->width = width * 0.5f;
 	pbody->height = height * 0.5f;
 
@@ -270,6 +274,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
+	pbody->sensor_type = NONE;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = 0;
 
