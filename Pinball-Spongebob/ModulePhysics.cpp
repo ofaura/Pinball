@@ -46,7 +46,7 @@ bool ModulePhysics::Start()
 update_status ModulePhysics::PreUpdate()
 {
 	world->Step(1.0f / 60.0f, 6, 2);
-
+	
 	for(b2Contact* c = world->GetContactList(); c; c = c->GetNext())
 	{
 		if(c->GetFixtureA()->IsSensor() && c->IsTouching())
@@ -59,6 +59,19 @@ update_status ModulePhysics::PreUpdate()
 	}
 
 	return UPDATE_CONTINUE;
+}
+
+void ModulePhysics::createPrismatic(b2Body* bodyA, b2Body* bodyB) {
+	b2PrismaticJointDef* pDef = new b2PrismaticJointDef();
+	pDef->bodyA = bodyA;
+	pDef->bodyB = bodyB;
+	pDef->collideConnected = false;
+
+	pDef->enableLimit = true;
+	pDef->upperTranslation = 50/32;
+	pDef->localAxisA.Set(0, 1);
+	
+	world->CreateJoint(pDef);
 }
 
 void ModulePhysics::createJoint(b2Body* bodyA, b2Body* bodyB,float low, float high, bool flip) {

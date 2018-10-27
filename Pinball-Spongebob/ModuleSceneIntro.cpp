@@ -115,7 +115,7 @@ update_status ModuleSceneIntro::Update()
 
 	// All draw functions ------------------------------------------------------
 	p2List_item<PhysBody*>* c = circles.getFirst();
-
+	
 	while(c != NULL)
 	{
 		int x, y;
@@ -144,6 +144,10 @@ update_status ModuleSceneIntro::Update()
 		c = c->next;
 	}
 
+	int x_box, y_box;
+	s_box->body->SetTransform({ PIXEL_TO_METERS(300), PIXEL_TO_METERS(436) }, 0);
+	m_box->body->SetTransform({ PIXEL_TO_METERS(300), m_box->body->GetPosition().y }, 0);
+	
 	return UPDATE_CONTINUE;
 }
 
@@ -359,12 +363,12 @@ void ModuleSceneIntro::DrawColliders()
 
 	int down_left[12] = {
 
-		119,	467,
+		119,	472,
 		38,		417,
 		38,		366,
 		40,		366,
 		40,		410,
-		97,		447
+		93,		445
 	};
 
 	down_left_ = App->physics->CreateChain(0, 0, down_left, 12);
@@ -446,19 +450,27 @@ void ModuleSceneIntro::DrawColliders()
 
 	create_kickers(kicker_left, kicker_right, kicker_topright);
 
+	m_box = App->physics->CreateRectangle(300, 436, 14, 10);//290, 436, 14, 10
+	m_box->body->SetGravityScale(0);
+	m_box->body->SetLinearDamping(1.75f);
+
+	s_box = App->physics->CreateRectangle(300, 436, 14, 10);//290, 460, 14, 10
+	s_box->body->SetGravityScale(0);
+	s_box->body->SetLinearDamping(1.75f);
+
+	App->physics->createPrismatic(s_box->body, m_box->body);
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 {
-	l_kicker = App->physics->CreateKickers(98, 443, kicker1,14); //dyn
+	l_kicker = App->physics->CreateKickers(94, 443, kicker1,14); //dyn
 	r_kicker = App->physics->CreateKickers(152, 443, kicker2, 14); //dyn
 	tr_kicker = App->physics->CreateKickers(236, 265, kicker3, 14); //dyn
 
-	pivot_body1 = App->physics->CreatePivots(105,448,9);
+	pivot_body1 = App->physics->CreatePivots(100,448,9);
 	pivot_body2 = App->physics->CreatePivots(205, 448, 9);
 	pivot_body3 = App->physics->CreatePivots(278, 270, 9);
 
-	
 	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
 	App->physics->createJoint(pivot_body2->body, r_kicker->body, -0.25f, 0.16f);
 	App->physics->createJoint(pivot_body3->body, tr_kicker->body, -0.25f, 0.0f);

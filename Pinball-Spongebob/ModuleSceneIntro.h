@@ -51,6 +51,9 @@ public:
 	PhysBody* r_kicker;
 	PhysBody* tr_kicker;
 
+	PhysBody* m_box;
+	PhysBody* s_box;
+
 	SDL_Texture* circle;
 	SDL_Texture* box;
 	SDL_Texture* rick;
