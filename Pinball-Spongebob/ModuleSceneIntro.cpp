@@ -25,6 +25,7 @@ bool ModuleSceneIntro::Start()
 	App->renderer->camera.x = App->renderer->camera.y = 0;
 	base_map = App->textures->Load("Assets/base.png");
 	guides = App->textures->Load("Assets/guides.png");
+	right_flipper = App->textures->Load("Assets/flipper.png");
 	circle = App->textures->Load("pinball/wheel.png"); 
 	box = App->textures->Load("pinball/crate.png");
 	rick = App->textures->Load("pinball/rick_head.png");
@@ -50,13 +51,14 @@ update_status ModuleSceneIntro::Update()
 {
 	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
 	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
+
 	//Blit score
 	App->fonts->BlitText(385, 190, score, "000", 0.5f);
 
 
 	if(App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25));
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 25, b2_dynamicBody));
 		circles.getLast()->data->listener = this;
 	}
 
@@ -395,6 +397,22 @@ void ModuleSceneIntro::DrawColliders()
 
 	top_right_wall_ = App->physics->CreateChain(0, 0, top_right_wall, 4);
 
+	int right_limit[4] = {
+
+		303,	116,
+		303,	500
+	};
+
+	right_limit_ = App->physics->CreateChain(0, 0, right_limit, 4);
+
+	int ball_base[4] = {
+
+		288,	436,
+		311,	436
+	};
+
+	ball_base_ = App->physics->CreateChain(0, 0, ball_base, 4);
+
 	//------CREATING KICKERS
 	int kicker_left[14] = {
 		1, 6,
@@ -444,4 +462,8 @@ void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
 	App->physics->createJoint(pivot_body2->body, r_kicker->body, -0.25f, 0.16f);
 	App->physics->createJoint(pivot_body3->body, tr_kicker->body, -0.25f, 0.0f);
+
+	//l_kicker->GetPosition(position.x, position.y);
+	App->renderer->Blit(right_flipper, 0, 0, NULL, 1.0f);
+
 }
