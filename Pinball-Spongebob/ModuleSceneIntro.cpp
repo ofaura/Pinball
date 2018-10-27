@@ -43,6 +43,11 @@ bool ModuleSceneIntro::Start()
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
+	activeLayers[bottom_layer] = false;
+	activeLayers[rail_layer] = true;
+	activeLayers[green_tube_entrance] = true;
+	activeLayers[green_tube_exit] = true;
+
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
 
 	DrawColliders();
@@ -243,6 +248,10 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		{
 			f->SetSensor(true);
 		}
+		activeLayers[bottom_layer] = false;
+		activeLayers[rail_layer] = true;
+		activeLayers[green_tube_entrance] = true;
+		activeLayers[green_tube_exit] = true;
 		break;
 	case ACTIVE_START_DOOR:
 		for (b2Fixture* f = door_->body->GetFixtureList(); f; f = f->GetNext())
@@ -256,15 +265,7 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 			f->SetSensor(true);
 		}
 
-		c = lgreen_tube_entrance.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
+		activeLayers[green_tube_entrance] = true;
 		break;
 	case TOP_LEFT_OUT:
 		for (b2Fixture* f = top_left_wall_->body->GetFixtureList(); f; f = f->GetNext())
@@ -285,179 +286,41 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		}
 		break;
 	case RAIL_IN:
-		c = rail.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
-
-		c = base_layer.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
-
-		c = lgreen_tube_entrance.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
+		activeLayers[rail_layer] = false;
+		activeLayers[bottom_layer] = true;
+		activeLayers[green_tube_entrance] = true;
+		activeLayers[green_tube_exit] = true;
 		break;
-		
 	case RAIL_END:
-		c = rail.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
+		activeLayers[rail_layer] = true;
+		activeLayers[bottom_layer] = false;
+		activeLayers[green_tube_entrance] = false;
 
-		c = base_layer.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
-
-		c = lgreen_tube_entrance.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
 		break;
 	case GREEN_TUBE_IN:
-
-		c = lgreen_tube_entrance.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
-
-		c = rail.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
-
-		c = base_layer.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
-
-		c = lgreen_tube_exit.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
+		activeLayers[green_tube_entrance] = false;
+		activeLayers[rail_layer] = true;
+		activeLayers[bottom_layer] = true;
+		activeLayers[green_tube_exit] = true;
 		break;
 	case GREEN_TUBE_MIDDLE:
 
-		c = lgreen_tube_entrance.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
-
-		c = lgreen_tube_exit.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
-
+		activeLayers[green_tube_entrance] = true;
+		activeLayers[green_tube_exit] = false;
 		//ADD CONDITION TO TELEPORT THE BALL
 
 		break;
 	case GREEN_TUBE_OUT:
 
-		c = lgreen_tube_entrance.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
-		
-		c = base_layer.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(false);
-			}
-			c = c->next;
-		}
-
-		c = lgreen_tube_exit.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
+		activeLayers[green_tube_entrance] = false;
+		activeLayers[bottom_layer] = false;
+		activeLayers[green_tube_exit] = true;
 		break;
 	case LEFT_PERIMETER:
-
-		c = lgreen_tube_entrance.getFirst();
-		while (c != NULL)
-		{
-			for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
-			{
-				f->SetSensor(true);
-			}
-			c = c->next;
-		}
+		activeLayers[green_tube_entrance] = true;
+		break;
 	}
+	resetLayers();
 }
 
 
@@ -508,7 +371,7 @@ void ModuleSceneIntro::DrawColliders()
 		289,	246
 	};
 
-	//door_ = App->physics->CreateChain(0, 0, door, 4);
+	door_ = App->physics->CreateChain(0, 0, door, 4);
 
 	int perimeter_final[14] = {
 		285,	246,
@@ -521,9 +384,7 @@ void ModuleSceneIntro::DrawColliders()
 	};
 
 	base_layer.add(App->physics->CreateChain(0, 0, perimeter_final, 14));
-
 	
-
 	int mr_crabs[18] = {
 
 		137,	116,
@@ -953,7 +814,7 @@ void ModuleSceneIntro::resetLayers() {
 	{
 		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
 		{
-			f->SetSensor(false);
+			f->SetSensor(activeLayers[green_tube_entrance]);
 		}
 		c = c->next;
 	}
@@ -963,7 +824,7 @@ void ModuleSceneIntro::resetLayers() {
 	{
 		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
 		{
-			f->SetSensor(true);
+			f->SetSensor(activeLayers[rail_layer]);
 		}
 		c = c->next;
 	}
@@ -973,7 +834,7 @@ void ModuleSceneIntro::resetLayers() {
 	{
 		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
 		{
-			f->SetSensor(false);
+			f->SetSensor(activeLayers[bottom_layer]);
 		}
 		c = c->next;
 	}
@@ -983,7 +844,7 @@ void ModuleSceneIntro::resetLayers() {
 	{
 		for (b2Fixture* f = c->data->body->GetFixtureList(); f; f = f->GetNext())
 		{
-			f->SetSensor(true);
+			f->SetSensor(activeLayers[green_tube_exit]);
 		}
 		c = c->next;
 	}
