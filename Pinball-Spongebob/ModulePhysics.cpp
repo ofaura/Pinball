@@ -35,9 +35,7 @@ bool ModulePhysics::Start()
 
 	// needed to create joints like mouse joint
 	b2BodyDef bd;
-	ground = world->CreateBody(&bd);
-	
-	
+	ground = world->CreateBody(&bd);	
 
 	return true;
 }
@@ -62,16 +60,22 @@ update_status ModulePhysics::PreUpdate()
 }
 
 void ModulePhysics::createPrismatic(b2Body* bodyA, b2Body* bodyB) {
-	b2PrismaticJointDef* pDef = new b2PrismaticJointDef();
-	pDef->bodyA = bodyA;
-	pDef->bodyB = bodyB;
-	pDef->collideConnected = false;
+	b2PrismaticJointDef pDef;
+	pDef.Initialize(bodyA, bodyB, bodyA->GetWorldCenter(), { 0,1 });
 
-	pDef->enableLimit = true;
-	pDef->upperTranslation = 50/32;
-	pDef->localAxisA.Set(0, 1);
+	//pDef->bodyA = bodyA;
+	//pDef->bodyB = bodyB;
+	pDef.collideConnected = false;
+
+	pDef.enableMotor = true;
+
+	pDef.enableLimit = true;
+	pDef.lowerTranslation = PIXEL_TO_METERS(-5);
+	pDef.upperTranslation = 50 / 32;
+	//pDef.upperTranslation = 50/32;
+	//pDef->localAxisA.Set(0, 1);
 	
-	world->CreateJoint(pDef);
+	spring = (b2PrismaticJoint*)world->CreateJoint(&pDef);
 }
 
 void ModulePhysics::createJoint(b2Body* bodyA, b2Body* bodyB,float low, float high, bool flip) {
@@ -171,6 +175,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type)
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
+	fixture.restitution = 0.5f;
 
 	b->CreateFixture(&fixture);
 
@@ -182,10 +187,10 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height)
+PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2BodyType type)
 {
 	b2BodyDef body;
-	body.type = b2_dynamicBody;
+	body.type = type;
 	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
 
 	b2Body* b = world->CreateBody(&body);

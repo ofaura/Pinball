@@ -44,7 +44,7 @@ public:
 	bool CleanUp();
 
 	PhysBody* CreateCircle(int x, int y, int radius,b2BodyType type = b2_staticBody);
-	PhysBody* CreateRectangle(int x, int y, int width, int height);
+	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType type = b2_dynamicBody);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height);
 	PhysBody* CreateChain(int x, int y, int* points, int size);
 
@@ -70,4 +70,5 @@ private:
 public:
 
 	p2List<b2RevoluteJoint*> joints;
+	b2PrismaticJoint* spring;
 };
