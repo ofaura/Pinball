@@ -32,6 +32,8 @@ public:
 	void DrawColliders();
 	void create_kickers(int* kicker1, int* kicker2, int* kicker3);
 	void create_sensors();
+	void SetScores();
+	void UpdateScores();
 
 	void resetLayers();
 
@@ -39,7 +41,7 @@ public:
 
 public:
 	p2List<PhysBody*> sensors;
-
+	p2List<PhysBody*> score_list;
 	p2List<PhysBody*> circles;
 	p2List<PhysBody*> boxes;
 	p2List<PhysBody*> ricks;
@@ -108,6 +110,7 @@ public:
 	bool crown_teleport;
 	bool blit_under;
 	char player_lives[10];
+	char player_score[10];
 	int score = -1;
 	int lives_font = -1; 
 	unsigned int lastTime = 0, currentTime;
@@ -115,6 +118,11 @@ public:
 	bool light_middle[5];
 	bool light_top[3];
 
+	bool score_hamburgers = false;
+	bool score_hole = false;
+	bool score_green_tube = false;
+	bool score_water_slide = false; 
+	
 	Animation anchor;
 
 	Animation bottom_light1;

@@ -130,6 +130,33 @@ PhysBody* ModulePhysics::CreatePivots(int x,int y,int diameter) {
 	return pbody;
 }
 
+PhysBody * ModulePhysics::CreateCircleSensor(int x, int y, int radius, Scores score)
+{
+	b2BodyDef body;
+	body.type = b2_staticBody;
+	body.position.Set(PIXEL_TO_METERS(x), PIXEL_TO_METERS(y));
+
+	b2Body* b = world->CreateBody(&body);
+
+	b2CircleShape shape;
+	shape.m_radius = PIXEL_TO_METERS(radius);
+
+	b2FixtureDef fixture;
+	fixture.shape = &shape;
+	fixture.density = 1.0f;
+	fixture.isSensor = true;
+
+	b->CreateFixture(&fixture);
+
+	PhysBody* pbody = new PhysBody();
+	pbody->body = b;
+	pbody->score_points = score;
+	b->SetUserData(pbody);
+	pbody->width = pbody->height = radius;
+
+	return pbody;
+}
+
 PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 {
 	b2BodyDef body;
@@ -165,7 +192,7 @@ PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type, int restitution)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type, float restitution)
 {
 	b2BodyDef body;
 	body.type = type;

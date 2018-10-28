@@ -25,6 +25,8 @@ public:
 	SDL_Texture* ball;
 
 	int lives;
+	int score = 0;
+
 	bool dead = false;;
 
 private:

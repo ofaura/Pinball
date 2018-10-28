@@ -74,6 +74,7 @@ bool ModuleSceneIntro::Start()
 	DrawColliders();
 	create_sensors();		
 	resetLayers();
+	SetScores();
 
 
 	return ret;
@@ -232,8 +233,9 @@ update_status ModuleSceneIntro::Update()
 
 	//Blit score
 	sprintf_s(player_lives, 10, "%d", App->player->lives);
+	sprintf_s(player_score, 10, "%d", App->player->score);
 
-	App->fonts->BlitText(385, 190, score, "000", 0.7f);
+	App->fonts->BlitText(375, 190, score, player_score, 0.7f);
 	App->fonts->BlitText(470, 242, lives_font, player_lives, 0.5f);
 	
 	int x, y;
@@ -257,6 +259,9 @@ update_status ModuleSceneIntro::Update()
 	Blit_Bottom_Lights();
 	Blit_Middle_Lights();
 	Blit_Top_Lights();
+
+	UpdateScores();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -357,6 +362,17 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 		for (sensor; sensor != nullptr; sensor = sensor->next) {
 			if (sensor->data == bodyB) {
 				sensorAction(sensor->data);
+			}
+		}
+	}
+
+	if (bodyB->score_points != NONE_) {
+		p2List_item<PhysBody*>* scores;
+		scores = App->scene_intro->score_list.getFirst();
+
+		for (scores; scores != nullptr; scores = scores->next) {
+			if (scores->data == bodyB) {
+				scores->data->active = true;
 			}
 		}
 	}
@@ -945,9 +961,9 @@ void ModuleSceneIntro::DrawColliders()
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 
-	App->physics->CreateCircle(172, 75, 13, b2_staticBody, 1.8f);
-	App->physics->CreateCircle(90, 85, 13, b2_staticBody, 1.8f);
-	App->physics->CreateCircle(135, 108, 13, b2_staticBody, 1.8f);
+	App->physics->CreateCircle(172, 75, 11, b2_staticBody, 2.0f);
+	App->physics->CreateCircle(90, 85, 11, b2_staticBody, 2.0f);
+	App->physics->CreateCircle(135, 108, 11, b2_staticBody, 2.0f);
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
@@ -1025,6 +1041,78 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 }
 
+void ModuleSceneIntro::SetScores()
+{
+	App->player->score = 0;
+
+	score_list.add(App->physics->CreateCircleSensor(172, 75, 13, HAMBURGERS));
+	score_list.getLast()->data->listener = this;
+	score_list.add(App->physics->CreateCircleSensor(90, 85, 13, HAMBURGERS));
+	score_list.getLast()->data->listener = this;
+	score_list.add(App->physics->CreateCircleSensor(135, 108, 13, HAMBURGERS));
+	score_list.getLast()->data->listener = this;
+	score_list.add(App->physics->CreateCircleSensor(249, 130, 8, HOLE));
+	score_list.getLast()->data->listener = this;
+	score_list.add(App->physics->CreateCircleSensor(195, 35, 8, WATER_SLIDE));
+	score_list.getLast()->data->listener = this;
+	score_list.add(App->physics->CreateCircleSensor(35, 11, 8, GREEN_TUBE));
+	score_list.getLast()->data->listener = this;
+}
+
+void ModuleSceneIntro::UpdateScores()
+{
+	if (score_hamburgers)
+	{
+		App->player->score += 1000;
+		score_hamburgers = false;
+	}
+
+	if (score_hole)
+	{
+		App->player->score += 3000;
+		score_hole = false;
+	}
+
+	if (score_water_slide)
+	{
+		App->player->score += 8000;
+		score_water_slide = false;
+	}
+
+	if (score_green_tube)
+	{
+		App->player->score += 10000;
+		score_green_tube = false;
+	}
+
+	for (p2List_item<PhysBody*>* score = score_list.getFirst(); score != nullptr; score = score->next)
+	{
+		if (score->data->active && score->data->score_points == HAMBURGERS)
+		{
+			score_hamburgers = true;
+			score->data->active = false;
+		}
+
+		if (score->data->active && score->data->score_points == HOLE)
+		{
+			score_hole = true;
+			score->data->active = false;
+		}
+
+		if (score->data->active && score->data->score_points == WATER_SLIDE)
+		{
+			score_water_slide = true;
+			score->data->active = false;
+		}
+
+		if (score->data->active && score->data->score_points == GREEN_TUBE)
+		{
+			score_green_tube = true;
+			score->data->active = false;
+		}
+	}
+}
+
 void ModuleSceneIntro::resetLayers() {
 
 	p2List_item<PhysBody*>* c;
@@ -1079,3 +1167,4 @@ bool ModuleSceneIntro::Sort(bool arr[], int n)
 	arr[0] = aux;
 	return arr;
 }
+
