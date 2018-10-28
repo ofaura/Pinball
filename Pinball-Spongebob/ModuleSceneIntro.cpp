@@ -40,7 +40,7 @@ bool ModuleSceneIntro::Start()
 	ball_text = App->textures->Load("Assets/ball_text.png");
 	sound = App->textures->Load("Assets/sound.png");
 	spring_tex = App->textures->Load("Assets/spring.png");
-
+	light_tex = App->textures->Load("Assets/Light.png");
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
@@ -50,6 +50,26 @@ bool ModuleSceneIntro::Start()
 	activeLayers[green_tube_exit] = true;
 
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+
+	bottom_light1.PushBack({ 0,0,9,10 });
+	bottom_light1.PushBack({ 9,0,9,10 });
+	bottom_light1.loop = false;
+
+	top_light1 = top_light2 = top_light3 = middle_light1 = middle_light2 = middle_light3 = middle_light4 = middle_light5 = bottom_light2 = bottom_light3 = bottom_light4 = bottom_light1;
+
+	for (int i = 0; i < 4 ;++i)
+	{
+		light_bottom[i] = false;
+	}
+	for (int i = 0; i < 5; ++i)
+	{
+		light_middle[i] = false;
+	}
+	for (int i = 0; i < 3; ++i)
+	{
+		light_top[i] = false;
+	}
+
 
 	DrawColliders();
 	create_sensors();		
@@ -227,7 +247,105 @@ update_status ModuleSceneIntro::Update()
 	r_kicker->GetPosition(x, y);
 	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
 
+
+	//BLIT LIGHTS
+	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN) {
+		Sort(light_bottom, 4);
+		Sort(light_middle, 5);
+		Sort(light_top, 3);
+	}
+	Blit_Bottom_Lights();
+	Blit_Middle_Lights();
+	Blit_Top_Lights();
 	return UPDATE_CONTINUE;
+}
+
+
+void ModuleSceneIntro::Blit_Top_Lights() {
+	for (int i = 0; i < 3; i++) {
+		if (!light_top[0])
+			top_light1.setFrame(0);
+		else if (light_top[0])
+			top_light1.setFrame(1);
+
+		if (!light_top[1])
+			top_light2.setFrame(0);
+		else if (light_top[1])
+			top_light2.setFrame(1);
+
+		if (!light_top[2])
+			top_light3.setFrame(0);
+		else if (light_top[2])
+			top_light3.setFrame(1);
+
+	}
+	App->renderer->Blit(light_tex, 106, 17, &top_light1.GetFrameRect());
+	App->renderer->Blit(light_tex, 131, 12, &top_light2.GetFrameRect());
+	App->renderer->Blit(light_tex, 155, 11, &top_light3.GetFrameRect());
+}
+
+void ModuleSceneIntro::Blit_Middle_Lights() {
+	for (int i = 0; i < 5; i++) {
+		if (!light_middle[0])
+			middle_light1.setFrame(0);
+		else if (light_middle[0])
+			middle_light1.setFrame(1);
+
+		if (!light_middle[1])
+			middle_light2.setFrame(0);
+		else if (light_middle[1])
+			middle_light2.setFrame(1);
+
+		if (!light_middle[2])
+			middle_light3.setFrame(0);
+		else if (light_middle[2])
+			middle_light3.setFrame(1);
+
+		if (!light_middle[3])
+			middle_light4.setFrame(0);
+		else if (light_middle[3])
+			middle_light4.setFrame(1);
+
+		if (!light_middle[4])
+			middle_light5.setFrame(0);
+		else if (light_middle[4])
+			middle_light5.setFrame(1);
+
+	}
+	App->renderer->Blit(light_tex, 126, 177, &middle_light1.GetFrameRect());
+	App->renderer->Blit(light_tex, 137, 175, &middle_light2.GetFrameRect());
+	App->renderer->Blit(light_tex, 148, 173, &middle_light3.GetFrameRect());
+	App->renderer->Blit(light_tex, 159, 171, &middle_light4.GetFrameRect());
+	App->renderer->Blit(light_tex, 170, 169, &middle_light5.GetFrameRect());
+}
+
+void ModuleSceneIntro::Blit_Bottom_Lights() {
+	for (int i = 0; i < 4; i++) {
+		if (!light_bottom[0])
+			bottom_light1.setFrame(0);
+		else if (light_bottom[0])
+			bottom_light1.setFrame(1);
+
+		if (!light_bottom[1])
+			bottom_light2.setFrame(0);
+		else if (light_bottom[1])
+			bottom_light2.setFrame(1);
+
+		if (!light_bottom[2])
+			bottom_light3.setFrame(0);
+		else if (light_bottom[2])
+			bottom_light3.setFrame(1);
+
+		if (!light_bottom[3])
+			bottom_light4.setFrame(0);
+		else if (light_bottom[3])
+			bottom_light4.setFrame(1);
+
+	}
+	App->renderer->Blit(light_tex, 26, 373, &bottom_light1.GetFrameRect());
+	App->renderer->Blit(light_tex, 47, 373, &bottom_light2.GetFrameRect());
+	App->renderer->Blit(light_tex, 254, 373, &bottom_light3.GetFrameRect());
+	App->renderer->Blit(light_tex, 275, 373, &bottom_light4.GetFrameRect());
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
@@ -347,7 +465,7 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		}
 		lastTime = SDL_GetTicks();
 		crown_teleport = true;
-		break; 
+		break;
 	case CROWN_OUT:
 		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
 		{
@@ -355,7 +473,44 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		}
 		crown_teleport = false;
 		break;
-	}
+	case LIGHT_TOP1:
+		light_top[0] = !light_top[0];
+		break;
+	case LIGHT_TOP2:
+		light_top[1] = !light_top[1];
+		break;
+	case LIGHT_TOP3:
+		light_top[2] = !light_top[2];
+		break;
+	case LIGHT_MIDDLE1:
+		light_middle[0] = !light_middle[0];
+		break;
+	case LIGHT_MIDDLE2:
+		light_middle[1] = !light_middle[1];
+		break;
+	case LIGHT_MIDDLE3:
+		light_middle[2] = !light_middle[2];
+		break;
+	case LIGHT_MIDDLE4:
+		light_middle[3] = !light_middle[3];
+		break;
+	case LIGHT_MIDDLE5:
+		light_middle[4] = !light_middle[4];
+		break;
+	case LIGHT_BOTTOM1:
+		light_bottom[0] = !light_bottom[0];
+		break;
+	case LIGHT_BOTTOM2:
+		light_bottom[1] = !light_bottom[1];
+		break;
+	case LIGHT_BOTTOM3:
+		light_bottom[2] = !light_bottom[2];
+		break;
+	case LIGHT_BOTTOM4:
+		light_bottom[3] = !light_bottom[3];
+		break;
+	};
+
 	resetLayers();
 	bool a = false;
 }
@@ -842,13 +997,29 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(87, 180, 4, 30, GREEN_TUBE_OUT));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(28, 395, 17, 4, LIGHT_BOTTOM));
+	sensors.add(App->physics->CreateRectangleSensor(28, 395, 17, 4, LIGHT_BOTTOM1));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(51, 395, 17, 4, LIGHT_BOTTOM));
+	sensors.add(App->physics->CreateRectangleSensor(51, 395, 17, 4, LIGHT_BOTTOM2));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(258, 395, 17, 4, LIGHT_BOTTOM)); //water_slide end
+	sensors.add(App->physics->CreateRectangleSensor(258, 395, 17, 4, LIGHT_BOTTOM3)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(281, 395, 17, 4, LIGHT_BOTTOM)); //water_slide end
+	sensors.add(App->physics->CreateRectangleSensor(281, 395, 17, 4, LIGHT_BOTTOM4));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(126, 168, 17, 4, LIGHT_MIDDLE1));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(137, 166, 17, 4, LIGHT_MIDDLE2));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(148, 164, 17, 4, LIGHT_MIDDLE3)); 
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(159, 162, 17, 4, LIGHT_MIDDLE4)); 
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(170, 160, 17, 4, LIGHT_MIDDLE5)); 
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(109, 50, 4, 4, LIGHT_TOP1)); 
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(136, 45, 4, 4, LIGHT_TOP2));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(162, 44, 4, 4, LIGHT_TOP3));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(30, 230, 20, 20, LEFT_PERIMETER));
 	sensors.getLast()->data->listener = this;
@@ -897,4 +1068,14 @@ void ModuleSceneIntro::resetLayers() {
 		}
 		c = c->next;
 	}
+}
+
+bool ModuleSceneIntro::Sort(bool arr[], int n)
+{  
+	bool aux = arr[n-1];
+	for (int i = n - 2; i >= 0; i--) {
+		arr[i + 1] = arr[i];
+	}
+	arr[0] = aux;
+	return arr;
 }

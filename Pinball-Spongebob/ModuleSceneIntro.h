@@ -5,6 +5,7 @@
 #include "Globals.h"
 #include "Box2D/Box2D/Box2D.h"
 #include "ModuleTextures.h"
+#include "Animation.h"
 
 class PhysBody;
 enum layers {
@@ -22,6 +23,9 @@ public:
 
 	bool Start();
 	update_status Update();
+	void Blit_Bottom_Lights();
+	void Blit_Middle_Lights();
+	void Blit_Top_Lights();
 	bool CleanUp();
 	void OnCollision(PhysBody* bodyA, PhysBody* bodyB);
 	void sensorAction(PhysBody * sensor);
@@ -30,6 +34,8 @@ public:
 	void create_sensors();
 
 	void resetLayers();
+
+	bool Sort(bool arr[], int n);
 
 public:
 	p2List<PhysBody*> sensors;
@@ -95,6 +101,7 @@ public:
 	SDL_Texture* ball_text;
 	SDL_Texture* sound;
 	SDL_Texture* spring_tex;
+	SDL_Texture* light_tex;
 
 	iPoint position;
 	bool tube_teleport;
@@ -104,4 +111,25 @@ public:
 	int score = -1;
 	int lives_font = -1; 
 	unsigned int lastTime = 0, currentTime;
+	bool light_bottom[4];
+	bool light_middle[5];
+	bool light_top[3];
+
+	Animation anchor;
+
+	Animation bottom_light1;
+	Animation bottom_light2;
+	Animation bottom_light3;
+	Animation bottom_light4;
+
+	Animation middle_light1;
+	Animation middle_light2;
+	Animation middle_light3;
+	Animation middle_light4;
+	Animation middle_light5;
+
+	Animation top_light1;
+	Animation top_light2;
+	Animation top_light3;
+	
 };

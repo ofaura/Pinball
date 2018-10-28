@@ -28,7 +28,19 @@ enum Sensors_List {
 	GREEN_TUBE_IN,
 	GREEN_TUBE_MIDDLE,
 	GREEN_TUBE_OUT,
-	LIGHT_BOTTOM
+	LIGHT_BOTTOM1,
+	LIGHT_BOTTOM2,
+	LIGHT_BOTTOM3,
+	LIGHT_BOTTOM4,
+	LIGHT_MIDDLE1,
+	LIGHT_MIDDLE2,
+	LIGHT_MIDDLE3,
+	LIGHT_MIDDLE4,
+	LIGHT_MIDDLE5,
+	LIGHT_TOP1,
+	LIGHT_TOP2,
+	LIGHT_TOP3
+
 };
 
 // Small class to return to other modules to track position and rotation of physics bodies
