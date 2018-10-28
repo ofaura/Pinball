@@ -56,6 +56,7 @@ bool ModuleSceneIntro::Start()
 	green_tube_fx = App->audio->LoadFx("Assets/Audio/green_tube.wav");
 	kicker_fx = App->audio->LoadFx("Assets/Audio/kicker.wav");
 	hamburger_fx = App->audio->LoadFx("Assets/Audio/hamburger.wav");
+	water_slide_fx = App->audio->LoadFx("Assets/Audio/water_slide.wav");
 
 	bottom_light1.PushBack({ 0,0,9,10 });
 	bottom_light1.PushBack({ 9,0,9,10 });
@@ -1289,6 +1290,7 @@ void ModuleSceneIntro::UpdateScores()
 		{
 			score_water_slide = true;
 			score->data->active = false;
+			App->audio->PlayFx(water_slide_fx);
 		}
 
 		if (score->data->active && score->data->score_points == GREEN_TUBE)
