@@ -273,7 +273,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size,int restitution)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size,int restitution, Sensors_List sensor)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
@@ -303,7 +303,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size,int res
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
-	pbody->sensor_type = NONE;
+	pbody->sensor_type = sensor;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = 0;
 

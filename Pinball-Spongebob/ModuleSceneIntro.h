@@ -24,6 +24,7 @@ public:
 	bool Start();
 	update_status Update();
 	void Blit_Bottom_Lights();
+	void Blit_Bouncer();
 	void Blit_Middle_Lights();
 	void Blit_Top_Lights();
 	bool CleanUp();
@@ -110,6 +111,7 @@ public:
 	SDL_Texture* sound;
 	SDL_Texture* spring_tex;
 	SDL_Texture* light_tex;
+	SDL_Texture* triangles;
 
 	iPoint position;
 	bool tube_teleport;
@@ -123,6 +125,7 @@ public:
 	bool light_bottom[4];
 	bool light_middle[5];
 	bool light_top[3];
+	bool bouncer[2];
 
 	bool down_played = false;
 	bool down_played2 = false;
@@ -134,6 +137,9 @@ public:
 	bool score_water_slide = false; 
 	
 	Animation anchor;
+	
+	Animation bouncer1;
+	Animation bouncer2;
 
 	Animation bottom_light1;
 	Animation bottom_light2;
