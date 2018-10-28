@@ -790,10 +790,9 @@ void ModuleSceneIntro::DrawColliders()
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 
-	circles.add(App->physics->CreateCircle(172, 75, 13, b2_staticBody, 1.8f));
-	circles.add(App->physics->CreateCircle(90, 85, 13, b2_staticBody, 1.8f));
-	circles.add(App->physics->CreateCircle(135, 108, 13, b2_staticBody, 1.8f));
-
+	App->physics->CreateCircle(172, 75, 13, b2_staticBody, 1.8f);
+	App->physics->CreateCircle(90, 85, 13, b2_staticBody, 1.8f);
+	App->physics->CreateCircle(135, 108, 13, b2_staticBody, 1.8f);
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
