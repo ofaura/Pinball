@@ -475,6 +475,9 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 			f->SetSensor(true);
 		}
 		break;
+	case RAIL_MIDDLE:
+		blit_under = true;
+		break;
 	case RAIL_END:
 		activeLayers[rail_layer] = true;
 		activeLayers[bottom_layer] = false;
@@ -563,7 +566,6 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		light_bottom[3] = !light_bottom[3];
 		break;
 	};
-
 	resetLayers();
 	bool a = false;
 }
@@ -1037,6 +1039,8 @@ void ModuleSceneIntro::create_sensors()
 	sensors.add(App->physics->CreateRectangleSensor(80, 25, 10, 10, TOP_LEFT_IN));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(75, 230, 30, 4, RAIL_IN)); //water_slide end
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(90, 45, 15, 15, RAIL_MIDDLE)); //water_slide end
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(80, 240, 40, 4, RAIL_END)); //water_slide end
 	sensors.getLast()->data->listener = this;
