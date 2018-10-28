@@ -43,10 +43,8 @@ bool ModulePlayer::CleanUp()
 // Update: draw background
 update_status ModulePlayer::Update()
 {
-//	player->GetPosition(position.x, position.y);
-//	App->renderer->Blit(ball, position.x, position.y, NULL, 1.0f, 1.0f, player->GetRotation());
-//
 	Lives();
+
 	return UPDATE_CONTINUE;
 }
 
@@ -69,6 +67,14 @@ void ModulePlayer::Lives()
 		if (lives != 0)
 		{
 			SetBall(PLAYER_POS_X, PLAYER_POS_Y);
+		}
+	}
+	else
+	{
+		if (App->input->GetKey(SDL_SCANCODE_R))
+		{
+			SetBall(PLAYER_POS_X, PLAYER_POS_Y);
+			lives = 5;
 		}
 	}
 }
