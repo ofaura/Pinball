@@ -50,6 +50,12 @@ bool ModuleSceneIntro::Start()
 	activeLayers[green_tube_exit] = true;
 
 	bonus_fx = App->audio->LoadFx("pinball/bonus.wav");
+	bouncer_fx = App->audio->LoadFx("Assets/Audio/bouncer.wav");
+	flipper_down_fx = App->audio->LoadFx("Assets/Audio/flipper_down.wav");
+	flipper_up_fx = App->audio->LoadFx("Assets/Audio/flipper_up.wav");
+	green_tube_fx = App->audio->LoadFx("Assets/Audio/green_tube.wav");
+	kicker_fx = App->audio->LoadFx("Assets/Audio/kicker.wav");
+	hamburger_fx = App->audio->LoadFx("Assets/Audio/hamburger.wav");
 
 	bottom_light1.PushBack({ 0,0,9,10 });
 	bottom_light1.PushBack({ 9,0,9,10 });
@@ -128,6 +134,12 @@ update_status ModuleSceneIntro::Update()
 
 		item->data->SetMaxMotorTorque(25.0f);
 		item->data->SetMotorSpeed(15.0f);
+		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
+		{
+			App->audio->PlayFx(flipper_down_fx);
+			down_played = false;
+		}
+			
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_IDLE) {
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
@@ -140,6 +152,12 @@ update_status ModuleSceneIntro::Update()
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(-50.0f);
 
+		if (!down_played)
+		{
+			App->audio->PlayFx(flipper_up_fx);
+			down_played = true;
+		}
+		
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_REPEAT) {
@@ -148,12 +166,25 @@ update_status ModuleSceneIntro::Update()
 
 		item->data->SetMaxMotorTorque(25.0f);
 		item->data->SetMotorSpeed(-20.0f);
+
+		if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_DOWN)
+		{
+			App->audio->PlayFx(flipper_down_fx);
+			down_played2 = false;
+		}
+			
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_IDLE) {
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst();
 
 		item->data->SetMaxMotorTorque(100.0f);
 		item->data->SetMotorSpeed(50.0f);
+
+		if (!down_played2)
+		{
+			App->audio->PlayFx(flipper_up_fx);
+			down_played2 = true;
+		}
 	}
 	
 	b2PrismaticJoint* spring = App->physics->spring;
@@ -162,10 +193,18 @@ update_status ModuleSceneIntro::Update()
 		spring->SetMaxMotorForce(5.0f);
 		spring->SetMotorSpeed(2.0f);
 
+		kicker_played = false;
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
 		spring->SetMaxMotorForce((m_box->body->GetPosition().y - PIXEL_TO_METERS(440))*28);//Transforms the position to the collision force with the ball
 		spring->SetMotorSpeed(-50.0f);
+
+		if (!kicker_played)
+		{
+			App->audio->PlayFx(kicker_fx);
+			kicker_played = true;
+		}
+		
 	}
 
 	if (m_box->body->GetPosition().y < PIXEL_TO_METERS(440)) {
@@ -376,8 +415,6 @@ void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
 			}
 		}
 	}
-
-	App->audio->PlayFx(bonus_fx);
 }
 
 
@@ -961,9 +998,9 @@ void ModuleSceneIntro::DrawColliders()
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 
-	App->physics->CreateCircle(172, 75, 11, b2_staticBody, 2.0f);
-	App->physics->CreateCircle(90, 85, 11, b2_staticBody, 2.0f);
-	App->physics->CreateCircle(135, 108, 11, b2_staticBody, 2.0f);
+	App->physics->CreateCircle(172, 75, 13, b2_staticBody, 2.0f);
+	App->physics->CreateCircle(90, 85, 13, b2_staticBody, 2.0f);
+	App->physics->CreateCircle(135, 108, 13, b2_staticBody, 2.0f);
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
@@ -1045,17 +1082,17 @@ void ModuleSceneIntro::SetScores()
 {
 	App->player->score = 0;
 
-	score_list.add(App->physics->CreateCircleSensor(172, 75, 13, HAMBURGERS));
+	score_list.add(App->physics->CreateCircleSensor(172, 75, 14, HAMBURGERS));
 	score_list.getLast()->data->listener = this;
-	score_list.add(App->physics->CreateCircleSensor(90, 85, 13, HAMBURGERS));
+	score_list.add(App->physics->CreateCircleSensor(90, 85, 14, HAMBURGERS));
 	score_list.getLast()->data->listener = this;
-	score_list.add(App->physics->CreateCircleSensor(135, 108, 13, HAMBURGERS));
+	score_list.add(App->physics->CreateCircleSensor(135, 108, 14, HAMBURGERS));
 	score_list.getLast()->data->listener = this;
 	score_list.add(App->physics->CreateCircleSensor(249, 130, 8, HOLE));
 	score_list.getLast()->data->listener = this;
 	score_list.add(App->physics->CreateCircleSensor(195, 35, 8, WATER_SLIDE));
 	score_list.getLast()->data->listener = this;
-	score_list.add(App->physics->CreateCircleSensor(35, 11, 8, GREEN_TUBE));
+	score_list.add(App->physics->CreateCircleSensor(10, 90, 8, GREEN_TUBE));
 	score_list.getLast()->data->listener = this;
 }
 
@@ -1091,6 +1128,7 @@ void ModuleSceneIntro::UpdateScores()
 		{
 			score_hamburgers = true;
 			score->data->active = false;
+			App->audio->PlayFx(hamburger_fx);
 		}
 
 		if (score->data->active && score->data->score_points == HOLE)
@@ -1109,6 +1147,7 @@ void ModuleSceneIntro::UpdateScores()
 		{
 			score_green_tube = true;
 			score->data->active = false;
+			App->audio->PlayFx(green_tube_fx);
 		}
 	}
 }

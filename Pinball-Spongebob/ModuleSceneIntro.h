@@ -89,6 +89,12 @@ public:
 	SDL_Texture* box;
 	SDL_Texture* rick;
 	uint bonus_fx;
+	uint bouncer_fx;
+	uint kicker_fx;
+	uint flipper_down_fx;
+	uint flipper_up_fx;
+	uint hamburger_fx;
+	uint green_tube_fx;
 
 	SDL_Texture* base_map;
 	SDL_Texture* guides;
@@ -117,6 +123,10 @@ public:
 	bool light_bottom[4];
 	bool light_middle[5];
 	bool light_top[3];
+
+	bool down_played = false;
+	bool down_played2 = false;
+	bool kicker_played = false;
 
 	bool score_hamburgers = false;
 	bool score_hole = false;
