@@ -37,6 +37,9 @@ bool ModulePlayer::CleanUp()
 	LOG("Unloading player");
 
 	App->textures->Unload(ball);
+	App->textures->Unload(high_score);
+
+	App->fonts->Unload(score_font);
 
 	return true;
 }
