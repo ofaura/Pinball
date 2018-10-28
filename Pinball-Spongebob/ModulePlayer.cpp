@@ -50,7 +50,6 @@ bool ModulePlayer::CleanUp()
 update_status ModulePlayer::Update()
 {
 	Lives();
-
 	return UPDATE_CONTINUE;
 }
 
