@@ -94,10 +94,14 @@ public:
 	SDL_Texture* slide;
 	SDL_Texture* ball_text;
 	SDL_Texture* sound;
+	SDL_Texture* spring_tex;
 
 	iPoint position;
-
+	bool tube_teleport;
+	bool crown_teleport;
+	bool blit_under;
 	char player_lives[10];
 	int score = -1;
-	int lives_font = -1;
+	int lives_font = -1; 
+	unsigned int lastTime = 0, currentTime;
 };

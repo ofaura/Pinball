@@ -152,6 +152,7 @@ PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 	b2FixtureDef fixture;
 	fixture.shape = &box;
 	fixture.density = 1.0f;
+	fixture.restitution = 0.5f;
 
 	b->CreateFixture(&fixture);
 
@@ -164,7 +165,7 @@ PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type, int restitution)
 {
 	b2BodyDef body;
 	body.type = type;
@@ -177,7 +178,7 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type)
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
 	fixture.density = 1.0f;
-	fixture.restitution = 0.5f;
+	fixture.restitution = restitution;
 
 	b->CreateFixture(&fixture);
 
@@ -203,6 +204,7 @@ PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2
 	b2FixtureDef fixture;
 	fixture.shape = &box;
 	fixture.density = 1.0f;
+	fixture.restitution = 0.5f;
 
 	b->CreateFixture(&fixture);
 
@@ -244,7 +246,7 @@ PhysBody* ModulePhysics::CreateRectangleSensor(int x, int y, int width, int heig
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)
+PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size,int restitution)
 {
 	b2BodyDef body;
 	body.type = b2_staticBody;
@@ -267,7 +269,7 @@ PhysBody* ModulePhysics::CreateChain(int x, int y, int* points, int size)
 
 	b2FixtureDef fixture;
 	fixture.shape = &shape;
-
+	fixture.restitution = restitution;
 	b->CreateFixture(&fixture);
 
 	delete p;

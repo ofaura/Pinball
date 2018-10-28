@@ -18,6 +18,7 @@ enum Sensors_List {
 	ACTIVE_START_DOOR,
 	RAIL_IN,
 	RAIL_END,
+	CROWN_IN,
 	CROWN_OUT,
 	LEFT_PERIMETER,
 	TOP_RIGHT_IN,
@@ -64,10 +65,10 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	PhysBody* CreateCircle(int x, int y, int radius,b2BodyType type = b2_staticBody);
+	PhysBody* CreateCircle(int x, int y, int radius,b2BodyType type = b2_staticBody, int restitution = 0.0f);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, Sensors_List sensor);
 	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType type = b2_dynamicBody);
-	PhysBody* CreateChain(int x, int y, int* points, int size);
+	PhysBody* CreateChain(int x, int y, int* points, int size, int restitution = 0.0f);
 
 
 	PhysBody* CreatePivots(int x, int y, int diameter);

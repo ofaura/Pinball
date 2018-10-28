@@ -30,15 +30,16 @@ bool ModuleSceneIntro::Start()
 	bounce_hamburger = App->textures->Load("Assets/flippers.png");
 	overlay = App->textures->Load("Assets/overlay.png");
 	left_flipper = App->textures->Load("Assets/flipper.png");
-	right_flipper = App->textures->Load("Assets/flipper_right.png");
-	top_right_flipper = App->textures->Load("Assets/flipper_topright.png");
 	//circle = App->textures->Load("pinball/wheel.png");
 	//box = App->textures->Load("pinball/crate.png");
 	//rick = App->textures->Load("pinball/rick_head.png");
+	right_flipper = App->textures->Load("Assets/flipper_right.png");
+	top_right_flipper = App->textures->Load("Assets/flipper_topright.png");
 	ball = App->textures->Load("Assets/ball.png");
 	slide = App->textures->Load("Assets/water_slide.png");
 	ball_text = App->textures->Load("Assets/ball_text.png");
 	sound = App->textures->Load("Assets/sound.png");
+	spring_tex = App->textures->Load("Assets/spring.png");
 
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
@@ -86,27 +87,9 @@ update_status ModuleSceneIntro::Update()
 {
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 5, b2_dynamicBody));
+		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7, b2_dynamicBody));
 		circles.getLast()->data->listener = this;
 	}
-	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(overlay_down, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(bounce_hamburger, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(slide, 0, 0, NULL, 1.0f);
-	
-	App->player->player->GetPosition(App->player->position.x, App->player->position.y);
-	App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 1.0f, 1.0f, App->player->player->GetRotation());
-	
-	App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(overlay, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(ball_text, 415, 244, NULL, 1.0f);
-	App->renderer->Blit(sound, 325, 244, NULL, 1.0f);
-
-	//Blit score
-	sprintf_s(player_lives, 10, "%d", App->player->lives);
-
-	App->fonts->BlitText(385, 190, score, "000", 0.7f);
-	App->fonts->BlitText(470, 242, lives_font, player_lives, 0.5f);
 
 	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
@@ -117,13 +100,13 @@ update_status ModuleSceneIntro::Update()
 		//Activate the motor ESSENTIAL STEP
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
 
-		item->data->SetMaxMotorTorque(100.0f);
-		item->data->SetMotorSpeed(50.0f);
+		item->data->SetMaxMotorTorque(25.0f);
+		item->data->SetMotorSpeed(15.0f);
 
 		item = item->next;
 
-		item->data->SetMaxMotorTorque(100.0f);
-		item->data->SetMotorSpeed(50.0f);
+		item->data->SetMaxMotorTorque(25.0f);
+		item->data->SetMotorSpeed(15.0f);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_IDLE) {
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
@@ -142,8 +125,8 @@ update_status ModuleSceneIntro::Update()
 		//Activate the motor ESSENTIAL STEP
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst();
 
-		item->data->SetMaxMotorTorque(100.0f);
-		item->data->SetMotorSpeed(-50.0f);
+		item->data->SetMaxMotorTorque(25.0f);
+		item->data->SetMotorSpeed(-20.0f);
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_LEFT) == KEY_IDLE) {
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst();
@@ -160,12 +143,12 @@ update_status ModuleSceneIntro::Update()
 
 	}
 	else if (App->input->GetKey(SDL_SCANCODE_DOWN) == KEY_UP) {
-		spring->SetMaxMotorForce((m_box->body->GetPosition().y - PIXEL_TO_METERS(436))*28);//Transforms the position to the collision force with the ball
+		spring->SetMaxMotorForce((m_box->body->GetPosition().y - PIXEL_TO_METERS(440))*28);//Transforms the position to the collision force with the ball
 		spring->SetMotorSpeed(-50.0f);
 	}
 
-	if (m_box->body->GetPosition().y < PIXEL_TO_METERS(436)) {
-		m_box->body->SetTransform({ PIXEL_TO_METERS(296), PIXEL_TO_METERS(436)}, 0);
+	if (m_box->body->GetPosition().y < PIXEL_TO_METERS(440)) {
+		m_box->body->SetTransform({ PIXEL_TO_METERS(296), PIXEL_TO_METERS(440)}, 0);
 		spring->SetMotorSpeed(0.0f);
 	}else
 		m_box->body->SetTransform({ PIXEL_TO_METERS(296), m_box->body->GetPosition().y }, 0);
@@ -178,46 +161,71 @@ update_status ModuleSceneIntro::Update()
 	mouse.y = App->input->GetMouseY();
 
 	// All draw functions ------------------------------------------------------
+
+	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(overlay_down, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(bounce_hamburger, 0, 0, NULL, 1.0f);
+
 	p2List_item<PhysBody*>* c = circles.getFirst();
-	
-	while(c != NULL)
+
+	while (c != NULL)
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
-		App->renderer->Blit(circle, x, y, NULL, 1.0f, c->data->GetRotation());
+		App->renderer->Blit(ball, x, y, NULL, 0.0f);
 		c = c->next;
 	}
 
-	c = boxes.getFirst();
-	
-	while(c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		App->renderer->Blit(box, x, y, NULL, 1.0f, c->data->GetRotation());
-		c = c->next;
+	App->player->player->GetPosition(App->player->position.x, App->player->position.y);
+	App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 0.0f);
+	if (crown_teleport) {
+		if (SDL_GetTicks() > lastTime + 1000) {
+			App->player->player->body->SetType(b2_dynamicBody);
+			App->player->player->body->ApplyForceToCenter({ 30,-30 }, true);
+			crown_teleport = false;
+		}
+		else {
+			App->player->player->body->SetTransform({ PIXEL_TO_METERS(248),PIXEL_TO_METERS(130) }, 0);
+			App->player->player->body->SetType(b2_staticBody);
+		}
+	}
+	if (tube_teleport) {
+		App->player->player->body->SetTransform({ PIXEL_TO_METERS(48),PIXEL_TO_METERS(40) }, 0);
+		tube_teleport = false;
+		blit_under = true;
+	}
+	if (blit_under) {
+		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 1.0f, 1.0f, App->player->player->GetRotation());
+		App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
+		App->renderer->Blit(slide, 0, 0, NULL, 1.0f);
+	}
+	else {
+		App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
+		App->renderer->Blit(slide, 0, 0, NULL, 1.0f);
+		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 1.0f, 1.0f, App->player->player->GetRotation());
 	}
 
-	c = ricks.getFirst();
+	App->renderer->Blit(spring_tex, METERS_TO_PIXELS(m_box->body->GetPosition().x) - 5, METERS_TO_PIXELS(m_box->body->GetPosition().y) - 4, NULL, 1.0f);
+	App->renderer->Blit(overlay, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(ball_text, 415, 244, NULL, 1.0f);
+	App->renderer->Blit(sound, 325, 244, NULL, 1.0f);
 
-	while(c != NULL)
-	{
-		int x, y;
-		c->data->GetPosition(x, y);
-		App->renderer->Blit(rick, x, y, NULL, 1.0f, c->data->GetRotation());
-		c = c->next;
-	}
+	//Blit score
+	sprintf_s(player_lives, 10, "%d", App->player->lives);
+
+	App->fonts->BlitText(385, 190, score, "000", 0.7f);
+	App->fonts->BlitText(470, 242, lives_font, player_lives, 0.5f);
 	
 	int x, y;
 
 	l_kicker->GetPosition(x, y);
-	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(93), PIXEL_TO_METERS(447));
+	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
 
 	tr_kicker->GetPosition(x, y);
-	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(217), PIXEL_TO_METERS(447));
+	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
 	
 	r_kicker->GetPosition(x, y);
-	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(278), PIXEL_TO_METERS(270));
+	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
 
 	return UPDATE_CONTINUE;
 }
@@ -290,24 +298,35 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		activeLayers[bottom_layer] = true;
 		activeLayers[green_tube_entrance] = true;
 		activeLayers[green_tube_exit] = true;
+
+		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(true);
+		}
 		break;
 	case RAIL_END:
 		activeLayers[rail_layer] = true;
 		activeLayers[bottom_layer] = false;
 		activeLayers[green_tube_entrance] = false;
 
+		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(false);
+		}
 		break;
 	case GREEN_TUBE_IN:
 		activeLayers[green_tube_entrance] = false;
 		activeLayers[rail_layer] = true;
 		activeLayers[bottom_layer] = true;
 		activeLayers[green_tube_exit] = true;
+		blit_under = true;
 		break;
 	case GREEN_TUBE_MIDDLE:
 
 		activeLayers[green_tube_entrance] = true;
 		activeLayers[green_tube_exit] = false;
 		//ADD CONDITION TO TELEPORT THE BALL
+		tube_teleport = true;
 
 		break;
 	case GREEN_TUBE_OUT:
@@ -315,12 +334,30 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		activeLayers[green_tube_entrance] = false;
 		activeLayers[bottom_layer] = false;
 		activeLayers[green_tube_exit] = true;
+		tube_teleport = false;
+		blit_under = false;
 		break;
 	case LEFT_PERIMETER:
 		activeLayers[green_tube_entrance] = true;
 		break;
+	case CROWN_IN:
+		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(true);
+		}
+		lastTime = SDL_GetTicks();
+		crown_teleport = true;
+		break; 
+	case CROWN_OUT:
+		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
+		{
+			f->SetSensor(false);
+		}
+		crown_teleport = false;
+		break;
 	}
 	resetLayers();
+	bool a = false;
 }
 
 
@@ -368,22 +405,21 @@ void ModuleSceneIntro::DrawColliders()
 	int door[4] = {
 
 		303,	222,
-		289,	246
+		278,	258,
 	};
 
 	door_ = App->physics->CreateChain(0, 0, door, 4);
 
-	int perimeter_final[14] = {
-		285,	246,
-		280,	260,
+	int perimeter_final[12] = {
 		288,	272,
-		266,	300,
-		288,	354,
+		266,	305,
+		266,	312,
+		288,	348,
 		288,	438,
 		194,	500
 	};
 
-	base_layer.add(App->physics->CreateChain(0, 0, perimeter_final, 14));
+	base_layer.add(App->physics->CreateChain(0, 0, perimeter_final, 12));
 	
 	int mr_crabs[18] = {
 
@@ -400,20 +436,10 @@ void ModuleSceneIntro::DrawColliders()
 
 	mr_crabs_ = App->physics->CreateChain(0, 0, mr_crabs, 18);
 
-	int top_right[68] = {
-
-		280,	118,
-		276,	119,
-		266,	130,
-		268,	166,
-		265,	191,
-		259,	209,
-		261,	219,
-		280,	190,
-		284,	162,
-		283,	132,
-		274,	83,
-		256,	58,
+	int top_right[66] = {
+		277,	97,
+		274,	85,
+		252,	58,
 		235,	41,
 		220,	33,
 		201,	27,
@@ -438,12 +464,33 @@ void ModuleSceneIntro::DrawColliders()
 		277,	97
 	};
 
-	base_layer.add(App->physics->CreateChain(0, 0, top_right, 68));
+	base_layer.add(App->physics->CreateChain(0, 0, top_right, 50));
+
+	int top_right2[20] = {
+		278,	118,
+		266,	130,
+		268,	166,
+		265,	191,
+		259,	209,
+		261,	219,
+		280,	190,
+		284,	162,
+		283,	132,
+		278,	118,
+	};
+
+	base_layer.add(App->physics->CreateChain(0, 0, top_right2, 20));
+	
+	int crown_door[4] = {
+		283,	119,
+		277,	97
+	};
+	top_right_ = App->physics->CreateChain(0, 0, crown_door, 4);
 
 	int left_triangle[6] = {
 
-		61,		365,
-		61,		404,
+		66,		375,
+		66,		403,
 		92,		419
 	};
 
@@ -451,17 +498,17 @@ void ModuleSceneIntro::DrawColliders()
 
 	int left_triangle_bouncer[4] = {
 
-		61,		365,
+		66,		375,
 		92,		419
 	};
 
-	left_triangle_bouncer_ = App->physics->CreateChain(0, 0, left_triangle_bouncer, 4);
+	left_triangle_bouncer_ = App->physics->CreateChain(0, 0, left_triangle_bouncer, 4, 2.5f);
 
 	int right_triangle[6] = {
 
 		217,	419,
 		247,	403,
-		247,	365
+		247,	375
 	};
 
 	right_triangle_ = App->physics->CreateChain(0, 0, right_triangle, 6);
@@ -469,10 +516,10 @@ void ModuleSceneIntro::DrawColliders()
 	int right_triangle_bouncer[4] = {
 
 		217,	419,
-		247,	365
+		247,	375
 	};
 
-	right_triangle_bouncer_ = App->physics->CreateChain(0, 0, right_triangle_bouncer, 4);
+	right_triangle_bouncer_ = App->physics->CreateChain(0, 0, right_triangle_bouncer, 4, 2.5f);
 
 	int top_left_pill[14] = {
 
@@ -485,7 +532,7 @@ void ModuleSceneIntro::DrawColliders()
 		121,	28
 	};
 
-	base_layer.add(App->physics->CreateChain(0, 0, top_left_pill, 14));
+	base_layer.add(App->physics->CreateChain(0, 0, top_left_pill, 14,0.5f));
 
 	int top_right_pill[14] = {
 
@@ -498,26 +545,26 @@ void ModuleSceneIntro::DrawColliders()
 		147,	24
 	};
 
-	base_layer.add(App->physics->CreateChain(0, 0, top_right_pill, 14));
+	base_layer.add(App->physics->CreateChain(0, 0, top_right_pill, 14,0.5f));
 
 	int down_left[12] = {
 
-		119,	480,
+		85,		452,
 		37,		420,
-		37,		366,
-		40,		366,
+		37,		376,
+		40,		376,
 		40,		408,
-		85,		440
+		91,		441
 	};
 
 	down_left_ = App->physics->CreateChain(0, 0, down_left, 12);
 
 	int down_right[12] = {
 
-		180,	480,
+		225,	450,
 		271,	420,
-		271,	366,
-		268,	366,
+		271,	376,
+		268,	376,
 		268,	408,
 		220,	440
 	};
@@ -530,7 +577,7 @@ void ModuleSceneIntro::DrawColliders()
 		91,		13
 	};
 
-	top_left_wall_ = App->physics->CreateChain(0, 0, top_left_wall, 4);
+	top_left_wall_ = App->physics->CreateChain(0, 0, top_left_wall, 4,0.9f);
 
 	int top_right_wall[4] = {
 
@@ -538,7 +585,7 @@ void ModuleSceneIntro::DrawColliders()
 		181,	4
 	};
 
-	top_right_wall_ = App->physics->CreateChain(0, 0, top_right_wall, 4);
+	top_right_wall_ = App->physics->CreateChain(0, 0, top_right_wall, 4,0.9f);
 
 	int right_limit[4] = {
 
@@ -660,20 +707,16 @@ void ModuleSceneIntro::DrawColliders()
 
 	base_layer.add(App->physics->CreateChain(0, 0, water_slide, 36));
 	
-	int greentube_bottom[18] = {
+	int greentube_bottom[10] = {
+		77,		193,
+		32,		152,
+		12,		127,
+		2,		98,
+		2,		77
 
-		74,		196,
-		100,	225,
-		98,		228,
-		72,		198,
-		72,		194,
-		45,		173,
-		36,		168,
-		13,		143,
-		6,		120
 	};
 
-	lgreen_tube_entrance.add(App->physics->CreateChain(0, 0, greentube_bottom, 18));
+	lgreen_tube_entrance.add(App->physics->CreateChain(0, 0, greentube_bottom, 10));
 
 	int green_tube_up[20] = {
 		42,		33,
@@ -690,13 +733,13 @@ void ModuleSceneIntro::DrawColliders()
 
 	lgreen_tube_entrance.add(App->physics->CreateChain(0, 0, green_tube_up, 20));
 
-	int green_tube_out[4] = {
-
+	int green_tube_out[6] = {
 		59,		360,
-		59,		27
+		59,		27,
+		40,		27
 	};
 
-	lgreen_tube_exit.add(App->physics->CreateChain(0, 0, green_tube_out, 4));
+	lgreen_tube_exit.add(App->physics->CreateChain(0, 0, green_tube_out, 6));
 
 	int green_tube_exit[4]{
 		39,		360,
@@ -706,12 +749,11 @@ void ModuleSceneIntro::DrawColliders()
 	lgreen_tube_exit.add(App->physics->CreateChain(0, 0, green_tube_exit, 4));
 
 	//------CREATING KICKERS
-	int kicker_left[14] = {
+	int kicker_left[12] = {
 		1, 6,
 		5, 0,
-		56, 4,
-		59, 7,
-		55, 10,
+		61, 4,
+		61, 10,
 		5, 12,
 		1, 6
 	};
@@ -738,40 +780,46 @@ void ModuleSceneIntro::DrawColliders()
 
 	create_kickers(kicker_left, kicker_right, kicker_topright);
 
-	m_box = App->physics->CreateRectangle(296, 436, 10, 10);//290, 436, 14, 10
+	m_box = App->physics->CreateRectangle(296, 440, 10, 10);//290, 436, 14, 10
 	m_box->body->SetGravityScale(0);
 	//m_box->body->SetLinearDamping(1.7f);
 
-	s_box = App->physics->CreateRectangle(296, 436, 10, 10,b2_staticBody);//290, 460, 14, 10
+	s_box = App->physics->CreateRectangle(296, 440, 10, 10,b2_staticBody);//290, 460, 14, 10
 	s_box->body->SetGravityScale(0);
 	//s_box->body->SetLinearDamping(1.7f);
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 
+	circles.add(App->physics->CreateCircle(172, 75, 13, b2_staticBody, 1.8f));
+	circles.add(App->physics->CreateCircle(90, 85, 13, b2_staticBody, 1.8f));
+	circles.add(App->physics->CreateCircle(135, 108, 13, b2_staticBody, 1.8f));
+
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
 {
-	l_kicker = App->physics->CreateKickers(87, 440, kicker1,14); //dyn
-	r_kicker = App->physics->CreateKickers(165, 440, kicker2, 14); //dyn
-	tr_kicker = App->physics->CreateKickers(236, 265, kicker3, 14); //dyn
+	l_kicker = App->physics->CreateKickers(87, 446, kicker1,12); //dyn
+	r_kicker = App->physics->CreateKickers(162, 446, kicker2, 14); //dyn
+	tr_kicker = App->physics->CreateKickers(240, 265, kicker3, 14); //dyn
 
-	pivot_body1 = App->physics->CreatePivots(93, 447, 11);
-	pivot_body2 = App->physics->CreatePivots(217, 447, 11);
-	pivot_body3 = App->physics->CreatePivots(278, 270, 9);
+	pivot_body1 = App->physics->CreatePivots(96, 452, 6);
+	pivot_body2 = App->physics->CreatePivots(215, 452, 6);
+	pivot_body3 = App->physics->CreatePivots(278, 270, 6);
 
-	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.25f, true);
-	App->physics->createJoint(pivot_body2->body, r_kicker->body, -0.25f, 0.16f);
-	App->physics->createJoint(pivot_body3->body, tr_kicker->body, -0.25f, 0.0f);
+	App->physics->createJoint(pivot_body1->body,l_kicker->body, -0.16f, 0.15f, true);
+	App->physics->createJoint(pivot_body2->body, r_kicker->body, -0.15f, 0.16f);
+	App->physics->createJoint(pivot_body3->body, tr_kicker->body, -0.30f, 0.0f);
 }
 
 void ModuleSceneIntro::create_sensors()
 {
-	sensors.add(App->physics->CreateRectangleSensor(298, 312, 17, 3, DISABLE_START_DOOR)); 
+	sensors.add(App->physics->CreateRectangleSensor(298, 250, 17, 3, DISABLE_START_DOOR)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(298, 224, 17, 3, ACTIVE_START_DOOR)); //door
+	sensors.add(App->physics->CreateRectangleSensor(298, 210, 17, 3, ACTIVE_START_DOOR)); //door
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(295, 198, 23, 3, CROWN_OUT)); 
+	sensors.add(App->physics->CreateRectangleSensor(245, 142, 20, 4, CROWN_IN));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(295, 108, 4, 20, CROWN_OUT)); 
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(211, 18, 10, 10, TOP_RIGHT_IN));
 	sensors.getLast()->data->listener = this;
@@ -787,11 +835,13 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(258, 375, 17, 4, RAIL_END)); //water_slide beginning
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(78, 175, 12, 25, GREEN_TUBE_IN));
+	sensors.add(App->physics->CreateRectangleSensor(76, 175, 4, 25, GREEN_TUBE_IN));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(10, 85, 15, 14, GREEN_TUBE_MIDDLE));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(51, 355, 17, 4, GREEN_TUBE_OUT));
+	sensors.getLast()->data->listener = this;
+	sensors.add(App->physics->CreateRectangleSensor(87, 180, 4, 30, GREEN_TUBE_OUT));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(28, 395, 17, 4, LIGHT_BOTTOM));
 	sensors.getLast()->data->listener = this;
