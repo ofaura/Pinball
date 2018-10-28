@@ -54,7 +54,7 @@ update_status ModulePlayer::Update()
 
 void ModulePlayer::SetBall(int x, int y)
 {
-	player = App->physics->CreateCircle(x, y, 7, b2_dynamicBody);
+	player = App->physics->CreateCircle(x, y, 7, b2_dynamicBody,0.7f);
 	player->listener = (Module*)App->scene_intro;
 }
 

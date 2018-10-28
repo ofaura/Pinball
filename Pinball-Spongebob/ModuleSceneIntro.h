@@ -24,6 +24,7 @@ public:
 	bool Start();
 	update_status Update();
 	void Blit_Bottom_Lights();
+	void Blit_Hamburgers();
 	void Blit_Bouncer();
 	void Blit_Middle_Lights();
 	void Blit_Top_Lights();
@@ -123,11 +124,12 @@ public:
 	char player_score[10];
 	int score = -1;
 	int lives_font = -1; 
-	unsigned int lastTime = 0, currentTime;
+	unsigned int lastTime = 0, currentTime, lastTime1, lastTime2, lastTime3;
 	bool light_bottom[4];
 	bool light_middle[5];
 	bool light_top[3];
 	bool bouncer[2];
+	bool hamburgers[3];
 	int anchor_c;
 
 	bool down_played = false;
@@ -159,5 +161,9 @@ public:
 	Animation top_light1;
 	Animation top_light2;
 	Animation top_light3;
+
+	Animation hamburger1;
+	Animation hamburger2;
+	Animation hamburger3;
 	
 };

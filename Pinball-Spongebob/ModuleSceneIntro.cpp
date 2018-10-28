@@ -27,12 +27,9 @@ bool ModuleSceneIntro::Start()
 	base_map = App->textures->Load("Assets/base.png");
 	guides = App->textures->Load("Assets/Overlay_Middle.png");
 	overlay_down = App->textures->Load("Assets/Overlay_Down.png");
-	bounce_hamburger = App->textures->Load("Assets/flippers.png");
+	bounce_hamburger = App->textures->Load("Assets/hamburgers.png");
 	overlay = App->textures->Load("Assets/overlay.png");
 	left_flipper = App->textures->Load("Assets/flipper.png");
-	//circle = App->textures->Load("pinball/wheel.png");
-	//box = App->textures->Load("pinball/crate.png");
-	//rick = App->textures->Load("pinball/rick_head.png");
 	right_flipper = App->textures->Load("Assets/flipper_right.png");
 	top_right_flipper = App->textures->Load("Assets/flipper_topright.png");
 	ball = App->textures->Load("Assets/ball.png");
@@ -81,6 +78,20 @@ bool ModuleSceneIntro::Start()
 
 	anchor_combo_anim.speed = 0.1f;
 	anchor_combo_anim.loop = true;
+
+	hamburger1.PushBack({ 0,0,24,41 });
+	hamburger1.PushBack({ 48,0,24,41 });
+	hamburger1.PushBack({ 72,0,24,41 });
+	hamburger1.PushBack({ 96,0,24,41 });
+	hamburger1.PushBack({ 120,0,24,41 });
+	hamburger1.PushBack({ 144,0,24,41 });
+	hamburger1.PushBack({ 168,0,24,41 });
+	hamburger1.PushBack({ 192,0,24,41 });
+	hamburger1.PushBack({ 216,0,24,41 });
+	hamburger1.loop = false;
+	hamburger1.speed = 0.4f;
+
+	hamburger2 = hamburger3 = hamburger1;
 
 
 	for (int i = 0; i < 4 ;++i)
@@ -249,7 +260,6 @@ update_status ModuleSceneIntro::Update()
 
 	App->renderer->Blit(base_map, 0, 0, NULL);
 	App->renderer->Blit(overlay_down, 0, 0, NULL);
-	App->renderer->Blit(bounce_hamburger, 0, 0, NULL);
 
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
@@ -333,6 +343,7 @@ update_status ModuleSceneIntro::Update()
 	Blit_Middle_Lights();
 	Blit_Top_Lights();
 	Blit_Bouncer();
+	Blit_Hamburgers();
 
 
 	if (blit_under) {
@@ -359,6 +370,7 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(ball_text, 415, 244, NULL);
 	App->renderer->Blit(sound, 325, 244, NULL);
 
+	Blit_Hamburgers();
 	UpdateScores();
 
 	return UPDATE_CONTINUE;
@@ -444,6 +456,31 @@ void ModuleSceneIntro::Blit_Bottom_Lights() {
 	App->renderer->Blit(light_tex, 47, 373, &bottom_light2.GetFrameRect());
 	App->renderer->Blit(light_tex, 254, 373, &bottom_light3.GetFrameRect());
 	App->renderer->Blit(light_tex, 275, 373, &bottom_light4.GetFrameRect());
+}
+
+void ModuleSceneIntro::Blit_Hamburgers() {
+	if (SDL_GetTicks() > lastTime1 + 100 && hamburger1.islastframe())
+			hamburger1.Reset(),
+			hamburgers[0] = false;
+
+	if (SDL_GetTicks() > lastTime2 + 100 && hamburger2.islastframe())
+		hamburger2.Reset(),
+		hamburgers[1] = false;
+
+	if (SDL_GetTicks() > lastTime3 + 100 && hamburger3.islastframe())
+		hamburger3.Reset(),
+		hamburgers[2] = false;
+
+	if (hamburgers[0])
+		hamburger1.GetCurrentFrame();
+	if (hamburgers[1])
+		hamburger2.GetCurrentFrame();
+	if (hamburgers[2])
+		hamburger3.GetCurrentFrame();
+
+	App->renderer->Blit(bounce_hamburger, 78, 60, &hamburger1.GetFrameRect());
+	App->renderer->Blit(bounce_hamburger, 123, 80, &hamburger2.GetFrameRect());
+	App->renderer->Blit(bounce_hamburger, 158, 50, &hamburger3.GetFrameRect());
 }
 
 void ModuleSceneIntro::Blit_Bouncer() {
@@ -658,6 +695,18 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		bouncer[1] = true;
 		lastTime = SDL_GetTicks();
 		App->audio->PlayFx(bouncer_fx);
+		break;
+	case HAMBURGER1:
+		hamburgers[0] = true;
+		lastTime1 = SDL_GetTicks();
+		break;
+	case HAMBURGER2:
+		hamburgers[1] = true;
+		lastTime2 = SDL_GetTicks();
+		break;
+	case HAMBURGER3:
+		hamburgers[2] = true;
+		lastTime3 = SDL_GetTicks();
 		break;
 	};
 	resetLayers();
@@ -1093,9 +1142,9 @@ void ModuleSceneIntro::DrawColliders()
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 
-	App->physics->CreateCircle(172, 75, 13, b2_staticBody, 2.0f);
-	App->physics->CreateCircle(90, 85, 13, b2_staticBody, 2.0f);
-	App->physics->CreateCircle(135, 108, 13, b2_staticBody, 2.0f);
+	sensors.add(App->physics->CreateCircle(90, 85, 14, b2_staticBody, 2.0f, HAMBURGER1));
+	sensors.add(App->physics->CreateCircle(135, 108, 14, b2_staticBody, 2.0f, HAMBURGER2));
+	sensors.add(App->physics->CreateCircle(172, 75, 14, b2_staticBody, 2.0f, HAMBURGER3));
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
@@ -1155,17 +1204,17 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(258, 395, 13, 4, LIGHT_BOTTOM3)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(278, 395, 13, 4, LIGHT_BOTTOM4));
+	sensors.add(App->physics->CreateRectangleSensor(278, 395, 13, 10, LIGHT_BOTTOM4));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(126, 168, 17, 4, LIGHT_MIDDLE1));
+	sensors.add(App->physics->CreateRectangleSensor(129, 169, 11, 15, LIGHT_MIDDLE1));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(137, 166, 17, 4, LIGHT_MIDDLE2));
+	sensors.add(App->physics->CreateRectangleSensor(141, 168, 11, 15, LIGHT_MIDDLE2));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(148, 164, 17, 4, LIGHT_MIDDLE3)); 
+	sensors.add(App->physics->CreateRectangleSensor(151, 165, 11, 15, LIGHT_MIDDLE3)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(159, 162, 17, 4, LIGHT_MIDDLE4)); 
+	sensors.add(App->physics->CreateRectangleSensor(162, 164, 11, 15, LIGHT_MIDDLE4)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(170, 160, 17, 4, LIGHT_MIDDLE5)); 
+	sensors.add(App->physics->CreateRectangleSensor(174, 161, 11, 15, LIGHT_MIDDLE5)); 
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(109, 50, 4, 4, LIGHT_TOP1)); 
 	sensors.getLast()->data->listener = this;

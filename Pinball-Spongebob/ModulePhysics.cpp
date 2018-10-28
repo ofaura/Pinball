@@ -192,7 +192,7 @@ PhysBody* ModulePhysics::CreateKickers(int x, int y, int* points, int size)
 	return pbody;
 }
 
-PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type, float restitution)
+PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type, float restitution, Sensors_List sensor)
 {
 	b2BodyDef body;
 	body.type = type;
@@ -211,12 +211,13 @@ PhysBody* ModulePhysics::CreateCircle(int x, int y, int radius, b2BodyType type,
 
 	PhysBody* pbody = new PhysBody();
 	pbody->body = b;
-	pbody->sensor_type = NONE;
+	pbody->sensor_type = sensor;
 	b->SetUserData(pbody);
 	pbody->width = pbody->height = radius;
 
 	return pbody;
 }
+
 
 PhysBody* ModulePhysics::CreateRectangle(int x, int y, int width, int height, b2BodyType type)
 {
