@@ -29,7 +29,7 @@ bool ModulePlayer::Start()
 
 	death_fx = App->audio->LoadFx("Assets/Audio/death.wav");
 	SetBall(PLAYER_POS_X, PLAYER_POS_Y);
-	
+
 	return true;
 }
 
@@ -79,7 +79,6 @@ void ModulePlayer::Lives()
 	}
 	else
 	{
-		App->audio->PlayFx(death_fx);
 		App->renderer->Blit(high_score_tex, 125, 110, NULL);
 
 		if (high_score < score)

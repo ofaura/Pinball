@@ -36,7 +36,7 @@ public:
 
 	int score_font = -1;
 	int high_score_font = -1;
-	bool dead = false;;
+	bool dead = false;
 
 private:
 
