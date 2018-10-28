@@ -112,6 +112,8 @@ public:
 	SDL_Texture* spring_tex;
 	SDL_Texture* light_tex;
 	SDL_Texture* triangles;
+	SDL_Texture* anchors;
+	SDL_Texture* anchors_combo;
 
 	iPoint position;
 	bool tube_teleport;
@@ -126,6 +128,7 @@ public:
 	bool light_middle[5];
 	bool light_top[3];
 	bool bouncer[2];
+	int anchor_c;
 
 	bool down_played = false;
 	bool down_played2 = false;
@@ -136,7 +139,8 @@ public:
 	bool score_green_tube = false;
 	bool score_water_slide = false; 
 	
-	Animation anchor;
+	Animation anchor_anim;
+	Animation anchor_combo_anim;
 	
 	Animation bouncer1;
 	Animation bouncer2;

@@ -67,6 +67,7 @@ void ModulePlayer::Lives()
 	{
 		dead = true;
 		lives -= 1;
+		App->scene_intro->anchor_c = 0;
 
 		if (lives != 0)
 		{

@@ -28,7 +28,7 @@ public:
 	char high_score_text[10];
 
 	int lives;
-	int score = 0;
+	uint32 score = 0;
 	int score_font = -1;
 	bool dead = false;;
 
