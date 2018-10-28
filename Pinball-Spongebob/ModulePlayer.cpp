@@ -22,7 +22,6 @@ bool ModulePlayer::Start()
 
 	lives = 5;
 
-	ball = App->textures->Load("Assets/ball.png");
 	high_score_tex = App->textures->Load("Assets/high_score.png");
 	score_font = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	high_score_font = App->fonts->Load("Assets/Fonts/high_score_font.png", "0123456789", 1);
@@ -38,7 +37,6 @@ bool ModulePlayer::CleanUp()
 {
 	LOG("Unloading player");
 
-	App->textures->Unload(ball);
 	App->textures->Unload(high_score_tex);
 
 	App->fonts->Unload(score_font);

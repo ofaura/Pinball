@@ -41,6 +41,7 @@ bool ModuleSceneIntro::Start()
 	triangles = App->textures->Load("Assets/triangles.png");
 	anchors = App->textures->Load("Assets/anchors.png");
 	anchors_combo = App->textures->Load("Assets/anchors_combo.png");
+	
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
@@ -160,11 +161,6 @@ update_status ModuleSceneIntro::Update()
 	{
 		circles.add(App->physics->CreateCircle(App->input->GetMouseX(), App->input->GetMouseY(), 7, b2_dynamicBody));
 		circles.getLast()->data->listener = this;
-	}
-
-	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
-	{
-		boxes.add(App->physics->CreateRectangle(App->input->GetMouseX(), App->input->GetMouseY(), 100, 50));
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN || App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_REPEAT) {
@@ -575,9 +571,13 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		{
 			f->SetSensor(true);
 		}
-		if(anchor_c<3)
-			anchor_c++;
+		if (anchor_c < 3)
+		{
+			if (anchor_c == 2)
+				App->player->score += 100000;
 
+			anchor_c++;
+		}
 		break;
 	case TOP_RIGHT_OUT:
 		for (b2Fixture* f = top_right_wall_->body->GetFixtureList(); f; f = f->GetNext())
