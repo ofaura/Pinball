@@ -23,13 +23,17 @@ public:
 	PhysBody* player;	
 	
 	SDL_Texture* ball;
-	SDL_Texture* high_score;
+	SDL_Texture* high_score_tex;
 
 	char high_score_text[10];
+	char score_text[10];
 
 	int lives;
 	uint32 score = 0;
+	uint32 high_score = 0;
+
 	int score_font = -1;
+	int high_score_font = -1;
 	bool dead = false;;
 
 private:

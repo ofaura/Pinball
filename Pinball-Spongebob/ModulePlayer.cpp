@@ -23,8 +23,9 @@ bool ModulePlayer::Start()
 	lives = 5;
 
 	ball = App->textures->Load("Assets/ball.png");
-	high_score = App->textures->Load("Assets/high_score.png");
+	high_score_tex = App->textures->Load("Assets/high_score.png");
 	score_font = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
+	high_score_font = App->fonts->Load("Assets/Fonts/high_score_font.png", "0123456789", 1);
 
 	SetBall(PLAYER_POS_X, PLAYER_POS_Y);
 	
@@ -37,9 +38,10 @@ bool ModulePlayer::CleanUp()
 	LOG("Unloading player");
 
 	App->textures->Unload(ball);
-	App->textures->Unload(high_score);
+	App->textures->Unload(high_score_tex);
 
 	App->fonts->Unload(score_font);
+	App->fonts->Unload(high_score_font);
 
 	return true;
 }
@@ -76,9 +78,15 @@ void ModulePlayer::Lives()
 	}
 	else
 	{
-		App->renderer->Blit(high_score, 125, 110, NULL);
-		sprintf_s(high_score_text, 10, "%d", score);
-		App->fonts->BlitText(210, 255, score_font, high_score_text, 0.7f);
+		App->renderer->Blit(high_score_tex, 125, 110, NULL);
+
+		if (high_score < score)
+			high_score = score;
+
+		sprintf_s(score_text, 10, "%d", score);
+		sprintf_s(high_score_text, 10, "%d", high_score);
+		App->fonts->BlitText(210, 255, score_font, score_text, 0.7f);
+		App->fonts->BlitText(190, 200, high_score_font, high_score_text, 0.7f);
 
 		if (App->input->GetKey(SDL_SCANCODE_R))
 		{
