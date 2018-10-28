@@ -42,6 +42,8 @@ bool ModuleSceneIntro::Start()
 	spring_tex = App->textures->Load("Assets/spring.png");
 	light_tex = App->textures->Load("Assets/Light.png");
 	triangles = App->textures->Load("Assets/triangles.png");
+	anchors = App->textures->Load("Assets/anchors.png");
+	anchors_combo = App->textures->Load("Assets/anchors_combo.png");
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
@@ -69,6 +71,17 @@ bool ModuleSceneIntro::Start()
 	bouncer1.loop = false;
 
 	bouncer2 = bouncer1;
+
+	anchor_anim.PushBack({ 0,0,46,64 });
+	anchor_anim.PushBack({ 46,0,46,64 });
+	anchor_anim.PushBack({ 92,0,46,64 });
+	anchor_anim.PushBack({ 138,0,46,64 });
+
+	anchor_combo_anim = anchor_anim;
+
+	anchor_combo_anim.speed = 0.1f;
+	anchor_combo_anim.loop = true;
+
 
 	for (int i = 0; i < 4 ;++i)
 	{
@@ -266,22 +279,7 @@ update_status ModuleSceneIntro::Update()
 		tube_teleport = false;
 		blit_under = true;
 	}
-	if (blit_under) {
-		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL);
-		App->renderer->Blit(guides, 0, 0, NULL);
-		App->renderer->Blit(slide, 0, 0, NULL);
-	}
-	else {
-		App->renderer->Blit(guides, 0, 0, NULL);
-		App->renderer->Blit(slide, 0, 0, NULL);
-		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL);
-	}
-
-	App->renderer->Blit(spring_tex, METERS_TO_PIXELS(m_box->body->GetPosition().x) - 5, METERS_TO_PIXELS(m_box->body->GetPosition().y) - 4, NULL);
-	App->renderer->Blit(overlay, 0, 0, NULL);
-	App->renderer->Blit(ball_text, 415, 244, NULL);
-	App->renderer->Blit(sound, 325, 244, NULL);
-
+	
 	//Blit score
 	sprintf_s(player_lives, 10, "%d", App->player->lives);
 	sprintf_s(player_score, 10, "%d", App->player->score);
@@ -307,11 +305,59 @@ update_status ModuleSceneIntro::Update()
 		Sort(light_middle, 5);
 		Sort(light_top, 3);
 	}
+
+	if (light_bottom[0] && light_bottom[1] && light_bottom[2] && light_bottom[3]) {
+		App->player->score = App->player->score * 2;
+		for (int i = 0; i < 4; ++i)
+		{
+			light_bottom[i] = false;
+		}
+	}
+	if (light_middle[0] && light_middle[1] && light_middle[2] && light_middle[3] && light_middle[4]) {
+		App->player->score = App->player->score * 2;
+
+		for (int i = 0; i < 5; ++i)
+		{
+			light_middle[i] = false;
+		}
+	}
+	if (light_top[0] && light_top[1] && light_top[2]) {
+		App->player->score = App->player->score * 2;
+		for (int i = 0; i < 3; ++i)
+		{
+			light_top[i] = false;
+		}
+	}
+
 	Blit_Bottom_Lights();
 	Blit_Middle_Lights();
 	Blit_Top_Lights();
 	Blit_Bouncer();
 
+
+	if (blit_under) {
+		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL);
+		App->renderer->Blit(guides, 0, 0, NULL);
+		App->renderer->Blit(slide, 0, 0, NULL);
+	}
+	else {
+		App->renderer->Blit(guides, 0, 0, NULL);
+		App->renderer->Blit(slide, 0, 0, NULL);
+		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL);
+	}
+
+	if (anchor_c <= 3) {
+		anchor_anim.setFrame(anchor_c);
+		App->renderer->Blit(anchors, 254, 200, &anchor_anim.GetFrameRect(), SDL_FLIP_NONE);
+	}
+	else {
+		App->renderer->Blit(anchors_combo, 254, 200, &anchor_combo_anim.GetCurrentFrame(), SDL_FLIP_NONE);
+	}
+
+	App->renderer->Blit(spring_tex, METERS_TO_PIXELS(m_box->body->GetPosition().x) - 5, METERS_TO_PIXELS(m_box->body->GetPosition().y) - 4, NULL);
+	App->renderer->Blit(overlay, 0, 0, NULL);
+	App->renderer->Blit(ball_text, 415, 244, NULL);
+	App->renderer->Blit(sound, 325, 244, NULL);
 
 	UpdateScores();
 
@@ -417,7 +463,6 @@ void ModuleSceneIntro::Blit_Bouncer() {
 
 	App->renderer->Blit(triangles, 62, 372, &bouncer1.GetFrameRect());
 	App->renderer->Blit(triangles, 217, 372, &bouncer2.GetFrameRect(),SDL_FLIP_HORIZONTAL);
-
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
@@ -486,6 +531,10 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		{
 			f->SetSensor(true);
 		}
+		if(anchor_c<3)
+			anchor_c++;
+		//ADD COMBO SCORE
+
 		break;
 	case TOP_RIGHT_OUT:
 		for (b2Fixture* f = top_right_wall_->body->GetFixtureList(); f; f = f->GetNext())
@@ -551,6 +600,8 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		}
 		lastTime = SDL_GetTicks();
 		crown_teleport = true;
+		if (anchor_c == 3)
+			anchor_c++;
 		break;
 	case CROWN_OUT:
 		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
