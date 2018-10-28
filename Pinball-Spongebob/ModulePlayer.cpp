@@ -10,9 +10,7 @@
 #include "ModuleFonts.h"
 
 ModulePlayer::ModulePlayer(Application* app, bool start_enabled) : Module(app, start_enabled)
-{
-	//ball = NULL;
-}
+{}
 
 ModulePlayer::~ModulePlayer()
 {}
@@ -25,6 +23,9 @@ bool ModulePlayer::Start()
 	lives = 5;
 
 	ball = App->textures->Load("Assets/ball.png");
+	high_score = App->textures->Load("Assets/high_score.png");
+	score_font = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
+
 	SetBall(PLAYER_POS_X, PLAYER_POS_Y);
 	
 	return true;
@@ -71,10 +72,15 @@ void ModulePlayer::Lives()
 	}
 	else
 	{
+		App->renderer->Blit(high_score, 125, 110, NULL, 1.0f);
+		sprintf_s(high_score_text, 10, "%d", score);
+		App->fonts->BlitText(210, 255, score_font, high_score_text, 0.7f);
+
 		if (App->input->GetKey(SDL_SCANCODE_R))
 		{
 			SetBall(PLAYER_POS_X, PLAYER_POS_Y);
 			lives = 5;
+			score = 0;
 		}
 	}
 }
