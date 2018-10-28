@@ -137,9 +137,16 @@ bool ModuleSceneIntro::CleanUp()
 	App->textures->Unload(slide);
 	App->textures->Unload(ball_text);
 	App->textures->Unload(sound);
-
+	App->textures->Unload(spring_tex);
+	App->textures->Unload(light_tex);
+	App->textures->Unload(triangles);
+	App->textures->Unload(anchors);
+	App->textures->Unload(anchors_combo);
 	App->fonts->Unload(score);
 	App->fonts->Unload(lives_font);
+	
+	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
+	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
 	return true;
 }
@@ -370,7 +377,6 @@ update_status ModuleSceneIntro::Update()
 	App->renderer->Blit(ball_text, 415, 244, NULL);
 	App->renderer->Blit(sound, 325, 244, NULL);
 
-	Blit_Hamburgers();
 	UpdateScores();
 
 	return UPDATE_CONTINUE;
@@ -570,7 +576,6 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		}
 		if(anchor_c<3)
 			anchor_c++;
-		//ADD COMBO SCORE
 
 		break;
 	case TOP_RIGHT_OUT:
