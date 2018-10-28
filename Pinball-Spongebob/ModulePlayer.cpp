@@ -27,6 +27,7 @@ bool ModulePlayer::Start()
 	score_font = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	high_score_font = App->fonts->Load("Assets/Fonts/high_score_font.png", "0123456789", 1);
 
+	death_fx = App->audio->LoadFx("Assets/Audio/death.wav");
 	SetBall(PLAYER_POS_X, PLAYER_POS_Y);
 	
 	return true;
@@ -72,11 +73,13 @@ void ModulePlayer::Lives()
 
 		if (lives != 0)
 		{
+			App->audio->PlayFx(death_fx);
 			SetBall(PLAYER_POS_X, PLAYER_POS_Y);
 		}
 	}
 	else
 	{
+		App->audio->PlayFx(death_fx);
 		App->renderer->Blit(high_score_tex, 125, 110, NULL);
 
 		if (high_score < score)

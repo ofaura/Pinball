@@ -32,6 +32,8 @@ public:
 	uint32 score = 0;
 	uint32 high_score = 0;
 
+	uint death_fx;
+
 	int score_font = -1;
 	int high_score_font = -1;
 	bool dead = false;;

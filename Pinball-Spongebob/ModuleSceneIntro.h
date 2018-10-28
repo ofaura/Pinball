@@ -97,6 +97,7 @@ public:
 	uint flipper_up_fx;
 	uint hamburger_fx;
 	uint green_tube_fx;
+	uint water_slide_fx;
 
 	SDL_Texture* base_map;
 	SDL_Texture* guides;

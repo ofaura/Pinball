@@ -56,6 +56,7 @@ bool ModuleSceneIntro::Start()
 	green_tube_fx = App->audio->LoadFx("Assets/Audio/green_tube.wav");
 	kicker_fx = App->audio->LoadFx("Assets/Audio/kicker.wav");
 	hamburger_fx = App->audio->LoadFx("Assets/Audio/hamburger.wav");
+	water_slide_fx = App->audio->LoadFx("Assets/Audio/water_slide.wav");
 
 	bottom_light1.PushBack({ 0,0,9,10 });
 	bottom_light1.PushBack({ 9,0,9,10 });
@@ -1147,9 +1148,9 @@ void ModuleSceneIntro::DrawColliders()
 
 	App->physics->createPrismatic(s_box->body, m_box->body);
 
-	sensors.add(App->physics->CreateCircle(90, 85, 14, b2_staticBody, 2.0f, HAMBURGER1));
-	sensors.add(App->physics->CreateCircle(135, 108, 14, b2_staticBody, 2.0f, HAMBURGER2));
-	sensors.add(App->physics->CreateCircle(172, 75, 14, b2_staticBody, 2.0f, HAMBURGER3));
+	sensors.add(App->physics->CreateCircle(90, 85, 13, b2_staticBody, 2.0f, HAMBURGER1));
+	sensors.add(App->physics->CreateCircle(135, 108, 13, b2_staticBody, 1.4f, HAMBURGER2));
+	sensors.add(App->physics->CreateCircle(172, 75, 13, b2_staticBody, 2.0f, HAMBURGER3));
 }
 
 void ModuleSceneIntro::create_kickers(int* kicker1, int* kicker2, int* kicker3)
@@ -1195,7 +1196,7 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(258, 375, 17, 4, RAIL_END)); //water_slide beginning
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(76, 175, 4, 25, GREEN_TUBE_IN));
+	sensors.add(App->physics->CreateRectangleSensor(76, 175, 4, 15, GREEN_TUBE_IN));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(10, 85, 15, 14, GREEN_TUBE_MIDDLE));
 	sensors.getLast()->data->listener = this;
@@ -1294,6 +1295,7 @@ void ModuleSceneIntro::UpdateScores()
 		{
 			score_water_slide = true;
 			score->data->active = false;
+			App->audio->PlayFx(water_slide_fx);
 		}
 
 		if (score->data->active && score->data->score_points == GREEN_TUBE)
