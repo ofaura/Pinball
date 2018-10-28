@@ -147,8 +147,8 @@ bool ModuleSceneIntro::CleanUp()
 	App->fonts->Unload(score);
 	App->fonts->Unload(lives_font);
 	
-	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
-	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
+	App->fonts->Unload(score);
+	App->fonts->Unload(lives_font);
 
 	return true;
 }
@@ -168,12 +168,12 @@ update_status ModuleSceneIntro::Update()
 		p2List_item<b2RevoluteJoint*>* item = App->physics->joints.getFirst()->next;
 
 		item->data->SetMaxMotorTorque(25.0f);
-		item->data->SetMotorSpeed(15.0f);
+		item->data->SetMotorSpeed(20.0f);
 
 		item = item->next;
 
 		item->data->SetMaxMotorTorque(25.0f);
-		item->data->SetMotorSpeed(15.0f);
+		item->data->SetMotorSpeed(20.0f);
 		if (App->input->GetKey(SDL_SCANCODE_RIGHT) == KEY_DOWN)
 		{
 			App->audio->PlayFx(flipper_down_fx);
@@ -633,6 +633,7 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		activeLayers[green_tube_entrance] = false;
 		activeLayers[bottom_layer] = false;
 		activeLayers[green_tube_exit] = true;
+		activeLayers[rail_layer] = false;
 		tube_teleport = false;
 		blit_under = true;
 		break;
@@ -696,11 +697,13 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		bouncer[0] = true;
 		lastTime = SDL_GetTicks();
 		App->audio->PlayFx(bouncer_fx);
+		App->player->score += 3000;
 		break;
 	case BOUNCER_RIGHT:
 		bouncer[1] = true;
 		lastTime = SDL_GetTicks();
 		App->audio->PlayFx(bouncer_fx);
+		App->player->score += 3000;
 		break;
 	case HAMBURGER1:
 		hamburgers[0] = true;
@@ -1117,13 +1120,13 @@ void ModuleSceneIntro::DrawColliders()
 	};
 	
 	int kicker_right[14] = {
-		1, 6,
+		0, 6,
 		5, 4,
 		56, 0,
 		59, 7,
 		55, 12,
 		5, 10,
-		1, 6
+		0, 6
 	};
 
 	int kicker_topright[14] = {
