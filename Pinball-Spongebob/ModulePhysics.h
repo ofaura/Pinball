@@ -41,6 +41,8 @@ enum Sensors_List {
 	LIGHT_TOP1,
 	LIGHT_TOP2,
 	LIGHT_TOP3,
+	BOUNCER_LEFT,
+	BOUNCER_RIGHT
 
 };
 
@@ -93,7 +95,7 @@ public:
 	PhysBody* CreateCircle(int x, int y, int radius,b2BodyType type = b2_staticBody, float restitution = 0.0f);
 	PhysBody* CreateRectangleSensor(int x, int y, int width, int height, Sensors_List sensor);
 	PhysBody* CreateRectangle(int x, int y, int width, int height, b2BodyType type = b2_dynamicBody);
-	PhysBody* CreateChain(int x, int y, int* points, int size, int restitution = 0.0f);
+	PhysBody* CreateChain(int x, int y, int* points, int size, int restitution = 0.0f, Sensors_List sensor = NONE);
 	PhysBody* CreatePivots(int x, int y, int diameter);
 	PhysBody* CreateCircleSensor(int x, int y, int radius, Scores score);
 	

@@ -41,6 +41,7 @@ bool ModuleSceneIntro::Start()
 	sound = App->textures->Load("Assets/sound.png");
 	spring_tex = App->textures->Load("Assets/spring.png");
 	light_tex = App->textures->Load("Assets/Light.png");
+	triangles = App->textures->Load("Assets/triangles.png");
 	score = App->fonts->Load("Assets/Fonts/font_score2.png", "0123456789", 1);
 	lives_font = App->fonts->Load("Assets/Fonts/lives.png", "0123456789", 1);
 
@@ -63,6 +64,12 @@ bool ModuleSceneIntro::Start()
 
 	top_light1 = top_light2 = top_light3 = middle_light1 = middle_light2 = middle_light3 = middle_light4 = middle_light5 = bottom_light2 = bottom_light3 = bottom_light4 = bottom_light1;
 
+	bouncer1.PushBack({ 0,0,32,52 });
+	bouncer1.PushBack({ 32,0,32,52 });
+	bouncer1.loop = false;
+
+	bouncer2 = bouncer1;
+
 	for (int i = 0; i < 4 ;++i)
 	{
 		light_bottom[i] = false;
@@ -74,6 +81,10 @@ bool ModuleSceneIntro::Start()
 	for (int i = 0; i < 3; ++i)
 	{
 		light_top[i] = false;
+	}
+	for (int i = 0; i < 2; ++i)
+	{
+		bouncer[i] = false;
 	}
 
 
@@ -223,9 +234,9 @@ update_status ModuleSceneIntro::Update()
 
 	// All draw functions ------------------------------------------------------
 
-	App->renderer->Blit(base_map, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(overlay_down, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(bounce_hamburger, 0, 0, NULL, 1.0f);
+	App->renderer->Blit(base_map, 0, 0, NULL);
+	App->renderer->Blit(overlay_down, 0, 0, NULL);
+	App->renderer->Blit(bounce_hamburger, 0, 0, NULL);
 
 	p2List_item<PhysBody*>* c = circles.getFirst();
 
@@ -233,7 +244,7 @@ update_status ModuleSceneIntro::Update()
 	{
 		int x, y;
 		c->data->GetPosition(x, y);
-		App->renderer->Blit(ball, x, y, NULL, 0.0f);
+		App->renderer->Blit(ball, x, y, NULL);
 		c = c->next;
 	}
 
@@ -256,20 +267,20 @@ update_status ModuleSceneIntro::Update()
 		blit_under = true;
 	}
 	if (blit_under) {
-		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 1.0f, 1.0f, App->player->player->GetRotation());
-		App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
-		App->renderer->Blit(slide, 0, 0, NULL, 1.0f);
+		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL);
+		App->renderer->Blit(guides, 0, 0, NULL);
+		App->renderer->Blit(slide, 0, 0, NULL);
 	}
 	else {
-		App->renderer->Blit(guides, 0, 0, NULL, 1.0f);
-		App->renderer->Blit(slide, 0, 0, NULL, 1.0f);
-		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 1.0f, 1.0f, App->player->player->GetRotation());
+		App->renderer->Blit(guides, 0, 0, NULL);
+		App->renderer->Blit(slide, 0, 0, NULL);
+		App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL);
 	}
 
-	App->renderer->Blit(spring_tex, METERS_TO_PIXELS(m_box->body->GetPosition().x) - 5, METERS_TO_PIXELS(m_box->body->GetPosition().y) - 4, NULL, 1.0f);
-	App->renderer->Blit(overlay, 0, 0, NULL, 1.0f);
-	App->renderer->Blit(ball_text, 415, 244, NULL, 1.0f);
-	App->renderer->Blit(sound, 325, 244, NULL, 1.0f);
+	App->renderer->Blit(spring_tex, METERS_TO_PIXELS(m_box->body->GetPosition().x) - 5, METERS_TO_PIXELS(m_box->body->GetPosition().y) - 4, NULL);
+	App->renderer->Blit(overlay, 0, 0, NULL);
+	App->renderer->Blit(ball_text, 415, 244, NULL);
+	App->renderer->Blit(sound, 325, 244, NULL);
 
 	//Blit score
 	sprintf_s(player_lives, 10, "%d", App->player->lives);
@@ -281,13 +292,13 @@ update_status ModuleSceneIntro::Update()
 	int x, y;
 
 	l_kicker->GetPosition(x, y);
-	App->renderer->Blit(left_flipper, x, y, NULL, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
+	App->renderer->Blit(left_flipper, x, y, NULL,SDL_FLIP_NONE, 1.0f, l_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
 
 	tr_kicker->GetPosition(x, y);
-	App->renderer->Blit(top_right_flipper, x, y, NULL, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
+	App->renderer->Blit(top_right_flipper, x, y, NULL, SDL_FLIP_NONE, 1.0f, tr_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
 	
 	r_kicker->GetPosition(x, y);
-	App->renderer->Blit(right_flipper, x, y, NULL, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
+	App->renderer->Blit(right_flipper, x, y, NULL, SDL_FLIP_NONE, 1.0f, r_kicker->GetRotation(), PIXEL_TO_METERS(0), PIXEL_TO_METERS(0));
 
 
 	//BLIT LIGHTS
@@ -299,6 +310,8 @@ update_status ModuleSceneIntro::Update()
 	Blit_Bottom_Lights();
 	Blit_Middle_Lights();
 	Blit_Top_Lights();
+	Blit_Bouncer();
+
 
 	UpdateScores();
 
@@ -307,56 +320,52 @@ update_status ModuleSceneIntro::Update()
 
 
 void ModuleSceneIntro::Blit_Top_Lights() {
-	for (int i = 0; i < 3; i++) {
-		if (!light_top[0])
-			top_light1.setFrame(0);
-		else if (light_top[0])
-			top_light1.setFrame(1);
+	if (!light_top[0])
+		top_light1.setFrame(0);
+	else if (light_top[0])
+		top_light1.setFrame(1);
 
-		if (!light_top[1])
-			top_light2.setFrame(0);
-		else if (light_top[1])
-			top_light2.setFrame(1);
+	if (!light_top[1])
+		top_light2.setFrame(0);
+	else if (light_top[1])
+		top_light2.setFrame(1);
 
-		if (!light_top[2])
-			top_light3.setFrame(0);
-		else if (light_top[2])
-			top_light3.setFrame(1);
+	if (!light_top[2])
+		top_light3.setFrame(0);
+	else if (light_top[2])
+		top_light3.setFrame(1);
 
-	}
 	App->renderer->Blit(light_tex, 106, 17, &top_light1.GetFrameRect());
 	App->renderer->Blit(light_tex, 131, 12, &top_light2.GetFrameRect());
 	App->renderer->Blit(light_tex, 155, 11, &top_light3.GetFrameRect());
 }
 
 void ModuleSceneIntro::Blit_Middle_Lights() {
-	for (int i = 0; i < 5; i++) {
-		if (!light_middle[0])
-			middle_light1.setFrame(0);
-		else if (light_middle[0])
-			middle_light1.setFrame(1);
+	if (!light_middle[0])
+		middle_light1.setFrame(0);
+	else if (light_middle[0])
+		middle_light1.setFrame(1);
 
-		if (!light_middle[1])
-			middle_light2.setFrame(0);
-		else if (light_middle[1])
-			middle_light2.setFrame(1);
+	if (!light_middle[1])
+		middle_light2.setFrame(0);
+	else if (light_middle[1])
+		middle_light2.setFrame(1);
 
-		if (!light_middle[2])
-			middle_light3.setFrame(0);
-		else if (light_middle[2])
-			middle_light3.setFrame(1);
+	if (!light_middle[2])
+		middle_light3.setFrame(0);
+	else if (light_middle[2])
+		middle_light3.setFrame(1);
 
-		if (!light_middle[3])
-			middle_light4.setFrame(0);
-		else if (light_middle[3])
-			middle_light4.setFrame(1);
+	if (!light_middle[3])
+		middle_light4.setFrame(0);
+	else if (light_middle[3])
+		middle_light4.setFrame(1);
 
-		if (!light_middle[4])
-			middle_light5.setFrame(0);
-		else if (light_middle[4])
-			middle_light5.setFrame(1);
+	if (!light_middle[4])
+		middle_light5.setFrame(0);
+	else if (light_middle[4])
+		middle_light5.setFrame(1);
 
-	}
 	App->renderer->Blit(light_tex, 126, 177, &middle_light1.GetFrameRect());
 	App->renderer->Blit(light_tex, 137, 175, &middle_light2.GetFrameRect());
 	App->renderer->Blit(light_tex, 148, 173, &middle_light3.GetFrameRect());
@@ -365,32 +374,50 @@ void ModuleSceneIntro::Blit_Middle_Lights() {
 }
 
 void ModuleSceneIntro::Blit_Bottom_Lights() {
-	for (int i = 0; i < 4; i++) {
-		if (!light_bottom[0])
-			bottom_light1.setFrame(0);
-		else if (light_bottom[0])
-			bottom_light1.setFrame(1);
+	if (!light_bottom[0])
+		bottom_light1.setFrame(0);
+	else if (light_bottom[0])
+		bottom_light1.setFrame(1);
 
-		if (!light_bottom[1])
-			bottom_light2.setFrame(0);
-		else if (light_bottom[1])
-			bottom_light2.setFrame(1);
+	if (!light_bottom[1])
+		bottom_light2.setFrame(0);
+	else if (light_bottom[1])
+		bottom_light2.setFrame(1);
 
-		if (!light_bottom[2])
-			bottom_light3.setFrame(0);
-		else if (light_bottom[2])
-			bottom_light3.setFrame(1);
+	if (!light_bottom[2])
+		bottom_light3.setFrame(0);
+	else if (light_bottom[2])
+		bottom_light3.setFrame(1);
 
-		if (!light_bottom[3])
-			bottom_light4.setFrame(0);
-		else if (light_bottom[3])
-			bottom_light4.setFrame(1);
+	if (!light_bottom[3])
+		bottom_light4.setFrame(0);
+	else if (light_bottom[3])
+		bottom_light4.setFrame(1);
 
-	}
 	App->renderer->Blit(light_tex, 26, 373, &bottom_light1.GetFrameRect());
 	App->renderer->Blit(light_tex, 47, 373, &bottom_light2.GetFrameRect());
 	App->renderer->Blit(light_tex, 254, 373, &bottom_light3.GetFrameRect());
 	App->renderer->Blit(light_tex, 275, 373, &bottom_light4.GetFrameRect());
+}
+
+void ModuleSceneIntro::Blit_Bouncer() {
+	if (SDL_GetTicks() < lastTime + 100) {
+		if (bouncer[0])
+			bouncer1.setFrame(1);
+
+		if (bouncer[1])
+			bouncer2.setFrame(1);
+	}
+	else {
+		bouncer1.setFrame(0);
+		bouncer2.setFrame(0);
+		bouncer[0] = false;
+		bouncer[1] = false;
+	}
+
+	App->renderer->Blit(triangles, 62, 372, &bouncer1.GetFrameRect());
+	App->renderer->Blit(triangles, 217, 372, &bouncer2.GetFrameRect(),SDL_FLIP_HORIZONTAL);
+
 }
 
 void ModuleSceneIntro::OnCollision(PhysBody* bodyA, PhysBody* bodyB)
@@ -432,6 +459,7 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		activeLayers[rail_layer] = true;
 		activeLayers[green_tube_entrance] = true;
 		activeLayers[green_tube_exit] = true;
+		blit_under = true;
 		break;
 	case ACTIVE_START_DOOR:
 		for (b2Fixture* f = door_->body->GetFixtureList(); f; f = f->GetNext())
@@ -470,6 +498,7 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		activeLayers[bottom_layer] = true;
 		activeLayers[green_tube_entrance] = true;
 		activeLayers[green_tube_exit] = true;
+		blit_under = false;
 
 		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
 		{
@@ -483,6 +512,7 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 		activeLayers[rail_layer] = true;
 		activeLayers[bottom_layer] = false;
 		activeLayers[green_tube_entrance] = false;
+		blit_under = false;
 
 		for (b2Fixture* f = top_right_->body->GetFixtureList(); f; f = f->GetNext())
 		{
@@ -505,12 +535,11 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 
 		break;
 	case GREEN_TUBE_OUT:
-
 		activeLayers[green_tube_entrance] = false;
 		activeLayers[bottom_layer] = false;
 		activeLayers[green_tube_exit] = true;
 		tube_teleport = false;
-		blit_under = false;
+		blit_under = true;
 		break;
 	case LEFT_PERIMETER:
 		activeLayers[green_tube_entrance] = true;
@@ -566,6 +595,16 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 	case LIGHT_BOTTOM4:
 		light_bottom[3] = !light_bottom[3];
 		break;
+	case BOUNCER_LEFT:
+		bouncer[0] = true;
+		lastTime = SDL_GetTicks();
+		App->audio->PlayFx(bouncer_fx);
+		break;
+	case BOUNCER_RIGHT:
+		bouncer[1] = true;
+		lastTime = SDL_GetTicks();
+		App->audio->PlayFx(bouncer_fx);
+		break;
 	};
 	resetLayers();
 	bool a = false;
@@ -574,7 +613,6 @@ void ModuleSceneIntro::sensorAction(PhysBody* sensor) {
 
 void ModuleSceneIntro::DrawColliders()
 {
-
 	int perimeter_init[64] = {
 
 		110,	500,
@@ -713,7 +751,7 @@ void ModuleSceneIntro::DrawColliders()
 		92,		419
 	};
 
-	left_triangle_bouncer_ = App->physics->CreateChain(0, 0, left_triangle_bouncer, 4, 2.5f);
+	sensors.add(App->physics->CreateChain(0, 0, left_triangle_bouncer, 4, 2.5f, BOUNCER_LEFT));
 
 	int right_triangle[6] = {
 
@@ -730,7 +768,7 @@ void ModuleSceneIntro::DrawColliders()
 		247,	375
 	};
 
-	right_triangle_bouncer_ = App->physics->CreateChain(0, 0, right_triangle_bouncer, 4, 2.5f);
+	sensors.add(App->physics->CreateChain(0, 0, right_triangle_bouncer, 4, 2.5f, BOUNCER_RIGHT));
 
 	int top_left_pill[14] = {
 
