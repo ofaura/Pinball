@@ -72,7 +72,7 @@ void ModulePlayer::Lives()
 	}
 	else
 	{
-		App->renderer->Blit(high_score, 125, 110, NULL, 1.0f);
+		App->renderer->Blit(high_score, 125, 110, NULL);
 		sprintf_s(high_score_text, 10, "%d", score);
 		App->fonts->BlitText(210, 255, score_font, high_score_text, 0.7f);
 
