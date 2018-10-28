@@ -197,7 +197,7 @@ update_status ModuleSceneIntro::Update()
 	}
 
 	App->player->player->GetPosition(App->player->position.x, App->player->position.y);
-	App->renderer->Blit(ball, App->player->position.x, App->player->position.y, NULL, 0.0f);
+
 	if (crown_teleport) {
 		if (SDL_GetTicks() > lastTime + 1000) {
 			App->player->player->body->SetType(b2_dynamicBody);
@@ -983,7 +983,7 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(80, 25, 10, 10, TOP_LEFT_IN));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(80, 230, 40, 4, RAIL_IN)); //water_slide end
+	sensors.add(App->physics->CreateRectangleSensor(75, 230, 30, 4, RAIL_IN)); //water_slide end
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(80, 240, 40, 4, RAIL_END)); //water_slide end
 	sensors.getLast()->data->listener = this;
@@ -997,13 +997,13 @@ void ModuleSceneIntro::create_sensors()
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(87, 180, 4, 30, GREEN_TUBE_OUT));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(28, 395, 17, 4, LIGHT_BOTTOM1));
+	sensors.add(App->physics->CreateRectangleSensor(30, 395, 13, 4, LIGHT_BOTTOM1));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(51, 395, 17, 4, LIGHT_BOTTOM2));
+	sensors.add(App->physics->CreateRectangleSensor(51, 395, 13, 4, LIGHT_BOTTOM2));
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(258, 395, 17, 4, LIGHT_BOTTOM3)); 
+	sensors.add(App->physics->CreateRectangleSensor(258, 395, 13, 4, LIGHT_BOTTOM3)); 
 	sensors.getLast()->data->listener = this;
-	sensors.add(App->physics->CreateRectangleSensor(281, 395, 17, 4, LIGHT_BOTTOM4));
+	sensors.add(App->physics->CreateRectangleSensor(278, 395, 13, 4, LIGHT_BOTTOM4));
 	sensors.getLast()->data->listener = this;
 	sensors.add(App->physics->CreateRectangleSensor(126, 168, 17, 4, LIGHT_MIDDLE1));
 	sensors.getLast()->data->listener = this;
